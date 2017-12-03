@@ -1,0 +1,9 @@
+<div class="header"><h1>Welcome to Article Site!</h1></div>
+<div class="container">
+  <div class="col-md-6">
+    <app-articles *ngFor="let article of articles" (selection)="showDetails($event)" [article]="article"></app-articles>
+  </div>
+  <div class="col-md-6">
+  <app-article (deleteArticleEmitter)="deleteArticle($event)" [article]="articleDetails"></app-article>
+  </div>
+</div>

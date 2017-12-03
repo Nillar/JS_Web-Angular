@@ -1,0 +1,17 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+body {
+  margin: 0px!important;
+}
+
+.container {
+  display: flex;
+}
+
+.header{
+  text-align: center;
+  background-color: #cca377;
+  height: 100px;
+}

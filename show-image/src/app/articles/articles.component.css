@@ -1,0 +1,17 @@
+.articles:hover {
+  color: white;
+  cursor: pointer;
+}
+
+.articles {
+  text-align: center;
+}
+
+.article-template {
+  display: inline-block;
+  width: 200px;
+  text-align: center;
+  background: #13abeb;
+  margin: 1em;
+  padding: 0.25em;
+}

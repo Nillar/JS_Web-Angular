@@ -1,0 +1,9 @@
+<div class="login-form">
+  <div>
+    <label for="username">Username</label>
+    <input (keyup)="collectData($event)" id="username" name="username" type="text" placeholder="Username">
+    <label for="password">Password</label>
+    <input (keyup)="collectData($event)" id="password" name="password" type="password" placeholder="Password">
+    <input (click)="loginUser()" type="submit" value="Login"/>
+  </div>
+</div>
