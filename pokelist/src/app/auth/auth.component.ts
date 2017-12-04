@@ -32,7 +32,6 @@ export class AuthComponent implements OnInit, OnDestroy {
   loginUser(e){
     this.sub$ = this.auth.authFunc(this.payload).subscribe(data=>{
       sessionStorage.setItem('authtoken', data['authtoken']);
-      // console.log(data.authtoken);
     });
   }
 }

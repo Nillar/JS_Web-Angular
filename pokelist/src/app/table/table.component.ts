@@ -14,6 +14,7 @@ export class TableComponent implements OnInit {
   constructor(private pokemonService: PokemonDetailService) {
     this.pokemonService.receivedPokemon$.subscribe(data => {
       this.pokemonToView = data;
+      console.log(this.pokemonToView);
     })
   }
 
