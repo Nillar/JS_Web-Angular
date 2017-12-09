@@ -1,3 +1,9 @@
+label {
+  margin-top: 15px;
+}
 .search> input {
-  width: 300px;
+  width: 345px;
+}
+.search {
+  border: 1px solid sandybrown;
 }
