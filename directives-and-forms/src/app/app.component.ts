@@ -15,6 +15,7 @@ const emailPattern = /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{
 export class AppComponent implements OnInit {
   register: FormGroup;
   title = 'softuni';
+  check: boolean;
 
   constructor(private fb: FormBuilder, private val: DuplicateCheck) {
   }
@@ -32,7 +33,8 @@ export class AppComponent implements OnInit {
       address: ['', [Validators.required]],
       city: ['', []],
       country: ['', []],
-      zip: ['', []]
+      zip: ['', []],
+      checked: this.check
     })
   }
 
@@ -40,9 +42,11 @@ export class AppComponent implements OnInit {
     return this.val.validateMail(email.value) ? {duplicate: true} : null;
   }
 
-  submit(a, b) {
-    console.log(a);
-    console.log(b);
-
+  submit(payload) {
+    let checkbox = document.getElementsByClassName('form-check-input');
+    if(!checkbox['0'].checked){
+      this.check = false;
+    }
+    console.log(payload.value);
   }
 }
