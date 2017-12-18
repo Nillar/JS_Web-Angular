@@ -2,11 +2,8 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
-import {ReactiveFormsModule} from "@angular/forms";
 
 import { AppComponent } from './app.component';
-
-import {DuplicateCheck} from "./validate-email";
 
 
 @NgModule({
@@ -14,11 +11,10 @@ import {DuplicateCheck} from "./validate-email";
     AppComponent
   ],
   imports: [
-    BrowserModule,ReactiveFormsModule,
-    AppRoutingModule,
-
+    BrowserModule,
+    AppRoutingModule
   ],
-  providers: [DuplicateCheck],
+  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
