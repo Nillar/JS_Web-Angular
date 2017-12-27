@@ -14,9 +14,9 @@ import {DuplicateCheck} from "./validate-email";
     AppComponent
   ],
   imports: [
-    BrowserModule,
+    BrowserModule,ReactiveFormsModule,
     AppRoutingModule,
-    ReactiveFormsModule
+
   ],
   providers: [DuplicateCheck],
   bootstrap: [AppComponent]

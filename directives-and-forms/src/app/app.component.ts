@@ -47,6 +47,10 @@ export class AppComponent implements OnInit {
     if(!checkbox['0'].checked){
       this.check = false;
     }
-    console.log(payload.value);
+    // for (let obj in payload.controls) {
+    //
+    //   console.log(obj + " " + JSON.stringify(payload.controls[obj].errors));
+    // }
+
   }
 }
