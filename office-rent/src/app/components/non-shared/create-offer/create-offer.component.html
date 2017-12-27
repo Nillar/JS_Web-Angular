@@ -1,0 +1,55 @@
+<div class="container">
+  <form (ngSubmit)="submit(create)" [formGroup]='create'>
+    <div class="form-row">
+      <div class="form-group col-md-6">
+        <label for="inputTitle">Title</label>
+        <input formControlName="title" type="text" class="form-control" id="inputTitle" placeholder="Title">
+        <div *ngIf="create.get('title').errors && create.get('title').touched" class="alert alert-danger">Title must be between 4 and 30 symbols</div>
+      </div>
+      <div class="form-group col-md-6">
+        <label for="inputImage">Image URL (optional)</label>
+        <input formControlName="image" type="text" class="form-control" id="inputImage" placeholder="Image URL">
+      </div>
+    </div>
+    <div class="form-group">
+      <div>
+        <label for="inputAddress">Address</label>
+        <input formControlName="address" type="text" class="form-control" id="inputAddress" placeholder="Address">
+        <div *ngIf="create.get('address').errors && create.get('address').touched" class="alert alert-danger">Address must be between 5 and 40 symbols</div>
+      </div>
+    </div>
+    <div class="form-group">
+      <div>
+        <label for="inputDescription">Description</label>
+        <textarea style="resize: none; height: 100px" formControlName="description" type="text" class="form-control" id="inputDescription" placeholder="Description"></textarea>
+        <div *ngIf="create.get('description').errors && create.get('description').touched" class="alert alert-danger">Description must be between 15 and 400 symbols</div>
+      </div>
+    </div>
+    <div class="form-group">
+      <div>
+        <label for="inputPrice">Price in EUR</label>
+        <input formControlName="price" type="number" class="form-control" id="inputPrice" placeholder="Price">
+        <div *ngIf="create.get('price').errors && create.get('price').touched" class="alert alert-danger">Price must be between 1 and 99999</div>
+      </div>
+    </div>
+    <div class="form-group">
+      <div>
+        <label for="inputArea">Area (square meters)</label>
+        <input formControlName="area" type="number" class="form-control" id="inputArea" placeholder="Area">
+        <div *ngIf="create.get('area').errors && create.get('area').touched" class="alert alert-danger">Area must be between 15 and 50000</div>
+      </div>
+    </div>
+    <div class="form-row">
+
+      <div class="form-group col-md-6">
+        <label for="inputSellerName">Your Name</label>
+        <input formControlName="sellerName" type="text" class="form-control" id="inputSellerName" placeholder="Your Name">
+      </div>
+      <div class="form-group col-md-6">
+        <label for="inputSellerPhone">Phone Number</label>
+        <input formControlName="sellerPhone" type="text" class="form-control" id="inputSellerPhone" placeholder="Phone number">
+      </div>
+    </div>
+    <button type="submit" class="btn btn-primary">Publish</button>
+  </form>
+</div>

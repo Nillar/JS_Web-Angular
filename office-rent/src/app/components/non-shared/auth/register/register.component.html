@@ -1,0 +1,36 @@
+<div class="container">
+  <form (ngSubmit)="submit(register)" [formGroup]='register'>
+    <div class="form-row">
+      <div class="form-group col-md-6">
+        <label for="inputEmail4">Email</label>
+        <input formControlName="email" type="email" class="form-control" id="inputEmail4" placeholder="Email">
+        <div *ngIf="register.get('email').errors && register.get('email').touched" class="alert alert-danger">Email is required</div>
+      </div>
+      <div class="form-group col-md-6">
+        <label for="inputName4">Username</label>
+        <input formControlName="username" type="text" class="form-control" id="inputName4" placeholder="Username">
+        <div *ngIf="register.get('username').errors && register.get('username').touched" class="alert alert-danger">Username is required</div>
+      </div>
+      <div formGroupName="auth" class="col-md-12">
+        <div class="form-group">
+          <label for="inputPassword4">Password</label>
+          <input formControlName="password" type="password" class="form-control" id="inputPassword4"
+                 placeholder="Password">
+          <div *ngIf="register.get('auth').get('password').errors && register.get('auth').get('password').touched" class="alert alert-danger">
+            Password is required
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="confirmPass">Confirm Password</label>
+          <input formControlName="confirmPassword" type="password" class="form-control" id="confirmPass"
+                 placeholder="Confirm Password">
+          <div
+            *ngIf="register.get('auth').get('confirmPassword').errors  && register.get('auth').get('confirmPassword').touched" class="alert alert-danger">
+            Passwords do not match
+          </div>
+        </div>
+      </div>
+    </div>
+    <button type="submit" class="btn btn-primary">Sign in</button>
+  </form>
+</div>
