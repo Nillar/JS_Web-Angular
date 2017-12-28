@@ -1,3 +1,23 @@
-<p>
-  offers-list works!
-</p>
+<div class="container main-body">
+  <h1>ACTIVE OFFERS</h1>
+  <hr>
+  <div class="form-row">
+    <div *ngFor="let offer of offers | paginate: { itemsPerPage: 6, currentPage: p }" class="col-md-6">
+      <div
+        class="media probootstrap-media d-flex align-items-stretch mb-4 probootstrap-animate fadeInUp probootstrap-animated">
+        <div class="probootstrap-media-image">
+          <img style="max-height: 250px; max-width: 250px;" src="{{offer.image}}"/>
+        </div>
+        <div class="media-body">
+          <span class="text-uppercase">Published on: <br/>{{calcTime(offer._kmd.lmt)}}</span>
+          <h4 class="mb-3">{{offer.title}}</h4>
+          <p>{{offer.address}}</p>
+          <p><a routerLink="/offers/{{offer._id}}">Read More</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="offersCount>6" class="pagination">
+    <pagination-controls (pageChange)="p = $event"></pagination-controls>
+  </div>
+</div>

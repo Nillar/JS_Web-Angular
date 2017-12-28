@@ -8,6 +8,7 @@ import {ReqHandlerService} from "../../../../services/req-handler.service";
 
 import {DuplicateCheck} from "./validate-email";
 import {PasswordValidation} from "./validate-pass";
+import {LoginModel} from "../../../../models/login.model";
 
 
 const emailPattern = /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/;
@@ -20,6 +21,7 @@ const emailPattern = /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{
 export class RegisterComponent implements OnInit{
   public register: FormGroup;
   public model: RegisterModel;
+  public loginModel: LoginModel;
   public registerFail: boolean;
   public userN: any;
   public passW: any;
@@ -30,7 +32,8 @@ export class RegisterComponent implements OnInit{
     private fb: FormBuilder,
     private reqHandlerService: ReqHandlerService,
     private value: DuplicateCheck) {
-    this.model = new RegisterModel('', '', '')
+    this.model = new RegisterModel('', '', '');
+    this.loginModel = new LoginModel('','');
   }
 
   ngOnInit() {
@@ -58,6 +61,9 @@ export class RegisterComponent implements OnInit{
     this.model.password = this.register.value.auth['password'];
     this.model.email = this.register.value['email'];
 
+    this.loginModel.username = this.register.value['username'];
+    this.loginModel.password = this.register.value.auth['password'];
+
     //NOTIFICATIONS
     if(this.model.username === ''){
       this.userN = true;
@@ -74,10 +80,11 @@ export class RegisterComponent implements OnInit{
       return
     }
 
+
     // POST REGISTER
     this.reqHandlerService.register(this.model).subscribe(data => {
-        this.successfulRegister();
-        this.router.navigate(['/login']);
+        this.successfulRegister(data);
+        // this.router.navigate(['/login']);
       },
       err => {
         console.log(err.message);
@@ -85,11 +92,16 @@ export class RegisterComponent implements OnInit{
       })
   }
 
-
-
-  successfulRegister(): void {
+  successfulRegister(data): void {
+    this.reqHandlerService.login(this.loginModel).subscribe(data=>{
+      this.reqHandlerService.authtoken = data['_kmd']['authtoken'];
+      localStorage.setItem('authtoken', data['_kmd']['authtoken']);
+      localStorage.setItem('username', data['username']);
+      this.router.navigate(['/'])
+    });
     this.registerFail = false;
-    this.router.navigate(['/']);
+    // this.router.navigate(['/']);
+
   }
 
 }

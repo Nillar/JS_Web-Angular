@@ -26,7 +26,6 @@ export class LoginComponent implements OnInit{
   }
 
   ngOnInit() {
-    console.log(this.reqHandlerService.isLoggedIn());
     // FORM GROUP REGISTER
     this.login = this.fb.group({
       username: ['', [Validators.required, Validators.minLength(4), Validators.maxLength(12)]],

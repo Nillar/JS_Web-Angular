@@ -39,6 +39,10 @@ export class CreateOfferComponent implements OnInit {
       this.model.image = this.create.value['image'];
     }
 
+    if(this.create.value['image'] === ''){
+      this.model.image = 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/480px-No_image_available.svg.png';
+    }
+
     this.model.title = this.create.value['title'];
     this.model.address = this.create.value['address'];
     this.model.description = this.create.value['description'];

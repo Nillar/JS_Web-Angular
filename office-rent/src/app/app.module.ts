@@ -3,11 +3,12 @@ import {NgModule} from '@angular/core';
 import {AppRoutingModule} from './app-routing.module';
 import {HttpClientModule} from "@angular/common/http";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
-// import {NgxPaginationModule} from 'ngx-pagination';
+import {NgxPaginationModule} from 'ngx-pagination';
 import {CommonModule} from "@angular/common";
 
 // SERVICES
 import {ReqHandlerModule} from "./services/req-handler.module";
+import {DuplicateCheck} from "./components/non-shared/auth/register/validate-email";
 
 // COMPONENTS
 import {AppComponent} from './app.component';
@@ -17,12 +18,13 @@ import {FooterComponent} from './components/shared/footer/footer.component';
 import {HomeComponent} from './components/non-shared/home/home.component';
 import {RegisterComponent} from "./components/non-shared/auth/register/register.component";
 import {LoginComponent} from "./components/non-shared/auth/login/login.component";
+import {LogoutComponent} from "./components/non-shared/auth/logout/logout.component";
 
 // GUARDS
 import {AuthGuard} from "./guards/auth.guard";
 import {ReqHandlerService} from "./services/req-handler.service";
-import {LogoutComponent} from "./components/non-shared/auth/logout/logout.component";
-import {DuplicateCheck} from "./components/non-shared/auth/register/validate-email";
+
+
 
 
 
@@ -42,6 +44,7 @@ import {DuplicateCheck} from "./components/non-shared/auth/register/validate-ema
     AppRoutingModule,
     FormsModule,
     ReactiveFormsModule,
+    NgxPaginationModule,
     HttpClientModule,
     CommonModule
   ],

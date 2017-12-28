@@ -9,7 +9,7 @@ import {AuthGuard} from "./guards/auth.guard";
 import {LogoutComponent} from "./components/non-shared/auth/logout/logout.component";
 
 const appRoutes: Routes = [
-  {pathMatch: 'full', path: '', canActivate: [AuthGuard], component: HomeComponent},
+  {pathMatch: 'full', path: '', component: HomeComponent},
   {path: 'login', component: LoginComponent},
   {path: 'register', component: RegisterComponent},
   {path: 'logout', component: LogoutComponent},
