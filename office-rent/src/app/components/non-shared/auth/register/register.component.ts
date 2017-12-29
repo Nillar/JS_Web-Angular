@@ -32,7 +32,7 @@ export class RegisterComponent implements OnInit{
     private fb: FormBuilder,
     private reqHandlerService: ReqHandlerService,
     private value: DuplicateCheck) {
-    this.model = new RegisterModel('', '', '');
+    this.model = new RegisterModel('', '', '','', '');
     this.loginModel = new LoginModel('','');
   }
 
@@ -41,6 +41,8 @@ export class RegisterComponent implements OnInit{
     this.register = this.fb.group({
       email: ['', [Validators.required, Validators.pattern(new RegExp(emailPattern)), this.checkMail.bind(this)]],
       username: ['', [Validators.required, Validators.minLength(4), Validators.maxLength(12)]],
+      firstName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(12)]],
+      lastName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(12)]],
       auth: this.fb.group({
         password: ['', [Validators.required, Validators.minLength(4), Validators.maxLength(25)]],
         confirmPassword: ['', [Validators.required, Validators.minLength(4), Validators.maxLength(25)]],
@@ -60,6 +62,8 @@ export class RegisterComponent implements OnInit{
     this.model.username = this.register.value['username'];
     this.model.password = this.register.value.auth['password'];
     this.model.email = this.register.value['email'];
+    this.model.firstName = this.register.value['firstName'];
+    this.model.lastName = this.register.value['lastName'];
 
     this.loginModel.username = this.register.value['username'];
     this.loginModel.password = this.register.value.auth['password'];
@@ -80,9 +84,9 @@ export class RegisterComponent implements OnInit{
       return
     }
 
-
     // POST REGISTER
     this.reqHandlerService.register(this.model).subscribe(data => {
+        console.log(data);
         this.successfulRegister(data);
         // this.router.navigate(['/login']);
       },
@@ -94,9 +98,13 @@ export class RegisterComponent implements OnInit{
 
   successfulRegister(data): void {
     this.reqHandlerService.login(this.loginModel).subscribe(data=>{
+
       this.reqHandlerService.authtoken = data['_kmd']['authtoken'];
       localStorage.setItem('authtoken', data['_kmd']['authtoken']);
       localStorage.setItem('username', data['username']);
+      localStorage.setItem('firstName', data['firstName']);
+      localStorage.setItem('lastName', data['lastName']);
+      localStorage.setItem('email', data['email']);
       this.router.navigate(['/'])
     });
     this.registerFail = false;

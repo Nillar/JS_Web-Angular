@@ -16,15 +16,31 @@
         <h5 class="card-header">Contact Details:</h5>
         <div class="card-body">
           <div class="form-row col-md-12">
-            <div class="col-md-6">
+            <div class="col-md-4">
+              <h5>Price: <strong>{{offer?.price}} EUR</strong></h5>
+            </div>
+            <div class="col-md-4">
+              <h5>Area: <strong>{{offer?.area}} sq/m2</strong></h5>
+            </div>
+            <div class="col-md-4">
+              <h5>Category: <strong>{{offer?.category}}</strong></h5>
+            </div>
+          </div>
+          <div class="form-row col-md-12">
+            <div class="col-md-4">
               <h5>Name: <strong>{{offer?.sellerName}}</strong></h5>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-4">
               <h5>Phone: <strong>{{offer?.sellerPhone}}</strong></h5>
+            </div>
+            <div class="col-md-4">
+              <h5>Email: <strong>{{offer?.sellerEmail}}</strong></h5>
             </div>
           </div>
         </div>
       </div>
+      <button *ngIf="isAuthor" class="btn btn-dark" (click)="edit(offer?._id)" type="submit" >Edit Offer</button>
+      <button *ngIf="isAuthor" class="btn btn-danger" (click)="delete(offer?._id)" type="submit" >Delete Offer</button>
       <hr>
       <!-- Comments Form -->
       <div class="card my-4">

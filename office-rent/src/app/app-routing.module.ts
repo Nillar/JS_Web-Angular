@@ -33,6 +33,11 @@ const appRoutes: Routes = [
     canActivate: [AuthGuard],
     loadChildren: './components/non-shared/create-offer/create-offer.module#CreateOffer'
   },
+  {
+    path: 'profile',
+    canActivate: [AuthGuard],
+    loadChildren: './components/non-shared/profile/profile.module#ProfileList'
+  },
   {path: '**', component: ErrorComponent}
 ];
 

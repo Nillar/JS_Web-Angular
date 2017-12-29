@@ -16,6 +16,7 @@ export class OfferDetailsComponent implements OnInit {
   public comment: FormGroup;
   public model: CommentModel;
   public offerComments: Object;
+  public isAuthor: boolean = false;
 
   constructor(private router: Router, private route: ActivatedRoute, private reqHandlerService: ReqHandlerService, private fb: FormBuilder) {
     this.username = localStorage.getItem('username');
@@ -31,6 +32,10 @@ export class OfferDetailsComponent implements OnInit {
 
     this.reqHandlerService.getOfferDetails(this.offerId).subscribe(data => {
       this.offer = data;
+      if(this.offer['author'] === localStorage.getItem('username')){
+        this.isAuthor = true;
+      }
+
     });
     this.reqHandlerService.getOfferComments(this.offerId).subscribe(data=>{
       this.offerComments = data;
@@ -48,6 +53,19 @@ export class OfferDetailsComponent implements OnInit {
       });
       this.router.navigate([`/offers/${this.offerId}`]);
       this.comment.reset();
+    })
+  }
+
+  edit(id){
+    this.router.navigate([`/edit/${id}`]);
+  }
+
+  delete(id){
+    this.reqHandlerService.deleteOffer(id).subscribe(data=>{
+      console.log(data);
+      this.reqHandlerService.deleteAllOfferComments(this.offerId).subscribe(data2 =>{
+        this.router.navigate(['/offers']);
+      })
     })
   }
 

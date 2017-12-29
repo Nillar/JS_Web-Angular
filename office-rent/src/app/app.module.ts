@@ -24,10 +24,6 @@ import {LogoutComponent} from "./components/non-shared/auth/logout/logout.compon
 import {AuthGuard} from "./guards/auth.guard";
 import {ReqHandlerService} from "./services/req-handler.service";
 
-
-
-
-
 @NgModule({
   declarations: [
     AppComponent,

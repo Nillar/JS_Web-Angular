@@ -1,12 +1,13 @@
-import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs/Observable';
+import {Injectable} from '@angular/core';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {Observable} from 'rxjs/Observable';
 
 // Models
-import { RegisterModel } from '../models/register.model';
-import { LoginModel } from '../models/login.model';
+import {RegisterModel} from '../models/register.model';
+import {LoginModel} from '../models/login.model';
 import {OfferModel} from "../models/offer.model";
 import {CommentModel} from "../models/comment.model";
+import {CategoryModel} from "../models/category.model";
 
 const appKey = "kid_HJZ7bTJmz";// APP KEY HERE;
 const appSecret = "91d79a4cf2494db3b3d724d82388e701"; // APP SECRET HERE;
@@ -15,20 +16,26 @@ const loginUrl = `https://baas.kinvey.com/user/${appKey}/login`;
 const logoutUrl = `https://baas.kinvey.com/user/${appKey}/_logout`;
 
 const getAllOffersUrl = `https://baas.kinvey.com/appdata/${appKey}/offers?query={}&sort={"_kmd.ect": -1}`;
+const getMyOffersUrl = `https://baas.kinvey.com/appdata/${appKey}/offers`
 const getOfferDetailsUrl = `https://baas.kinvey.com/appdata/${appKey}/offers/`;
 const createOfferUrl = `https://baas.kinvey.com/appdata/${appKey}/offers`;
 const createCommentUrl = `https://baas.kinvey.com/appdata/${appKey}/comments`;
+const createCategoryUrl = `https://baas.kinvey.com/appdata/${appKey}/categories`;
 const getOfferCommentsUrl = `https://baas.kinvey.com/appdata/${appKey}/comments`;
+const getAllCategoriesUrl = `https://baas.kinvey.com/appdata/${appKey}/categories`;
+
+const deleteOfferUrl = `https://baas.kinvey.com/appdata/${appKey}/offers/`;
+const deleteAllOfferCommentsUrl = `https://baas.kinvey.com/appdata/${appKey}/comments`;
+const editOfferUrl = `https://baas.kinvey.com/appdata/${appKey}/offers/`;
 
 @Injectable()
 export class ReqHandlerService {
-  private currentAuthtoken : string;
+  private currentAuthtoken: string;
 
-  constructor(
-    private http : HttpClient
-  ) { }
+  constructor(private http: HttpClient) {
+  }
 
-  login(loginModel : LoginModel) {
+  login(loginModel: LoginModel) {
     return this.http.post(
       loginUrl,
       JSON.stringify(loginModel),
@@ -38,7 +45,7 @@ export class ReqHandlerService {
     )
   }
 
-  register(registerModel : RegisterModel) : Observable<Object> {
+  register(registerModel: RegisterModel): Observable<Object> {
     return this.http.post(
       registerUrl,
       JSON.stringify(registerModel),
@@ -59,7 +66,7 @@ export class ReqHandlerService {
   }
 
   isLoggedIn() {
-    let authtoken : string = localStorage.getItem('authtoken');
+    let authtoken: string = localStorage.getItem('authtoken');
 
     return authtoken === this.currentAuthtoken;
   }
@@ -68,11 +75,11 @@ export class ReqHandlerService {
     return this.currentAuthtoken;
   }
 
-  set authtoken(value : string) {
+  set authtoken(value: string) {
     this.currentAuthtoken = value;
   }
 
-  private createAuthHeaders(type : string) : HttpHeaders {
+  private createAuthHeaders(type: string): HttpHeaders {
     if (type === 'Basic') {
       return new HttpHeaders({
         'Authorization': `Basic ${btoa(`${appKey}:${appSecret}`)}`,
@@ -86,7 +93,7 @@ export class ReqHandlerService {
     }
   }
 
-  getAllOffers(){
+  getAllOffers() {
     return this.http.get(
       getAllOffersUrl,
       {
@@ -95,7 +102,16 @@ export class ReqHandlerService {
     )
   }
 
-  getOfferDetails(id){
+  getMyOffers(){
+    return this.http.get(
+      getMyOffersUrl + `?query={"author":"${localStorage.getItem(`username`)}"}&sort={"_kmd.ect": -1}`,
+      {
+        headers: this.createAuthHeaders('Kinvey')
+      }
+    )
+  }
+
+  getOfferDetails(id) {
     return this.http.get(
       getOfferDetailsUrl + `${id}`,
       {
@@ -104,7 +120,7 @@ export class ReqHandlerService {
     )
   }
 
-  getOfferComments(id){
+  getOfferComments(id) {
     return this.http.get(
       getOfferCommentsUrl + `?query={"postId":"${id}"}&sort={"_kmd.ect": -1}`,
       {
@@ -113,7 +129,16 @@ export class ReqHandlerService {
     )
   }
 
-  createOffer(offerModel: OfferModel) : Observable<Object>{
+  getAllCategories(){
+    return this.http.get(
+      getAllCategoriesUrl,
+      {
+        headers: this.createAuthHeaders('Kinvey')
+      }
+    )
+  }
+
+  createOffer(offerModel: OfferModel): Observable<Object> {
     return this.http.post(
       createOfferUrl,
       JSON.stringify(offerModel),
@@ -123,10 +148,48 @@ export class ReqHandlerService {
     )
   }
 
-  createComment(commentModel: CommentModel){
+  createComment(commentModel: CommentModel) {
     return this.http.post(
       createCommentUrl,
       JSON.stringify(commentModel),
+      {
+        headers: this.createAuthHeaders('Kinvey')
+      }
+    )
+  }
+
+  createCategory(categoryModel: CategoryModel) {
+    return this.http.post(
+      createCategoryUrl,
+      JSON.stringify(categoryModel),
+      {
+        headers: this.createAuthHeaders('Kinvey')
+      }
+    )
+  }
+
+  deleteOffer(id){
+    return this.http.delete(
+      deleteOfferUrl + id,
+      {
+        headers: this.createAuthHeaders('Kinvey')
+      }
+    )
+  }
+
+  deleteAllOfferComments(id){
+    return this.http.delete(
+      deleteAllOfferCommentsUrl + `?query={"postId":"${id}"}`,
+      {
+        headers: this.createAuthHeaders('Kinvey')
+      }
+    )
+  }
+
+  editOffer(offerModel: OfferModel, id){
+    return this.http.put(
+      editOfferUrl + id,
+      JSON.stringify(offerModel),
       {
         headers: this.createAuthHeaders('Kinvey')
       }

@@ -42,10 +42,13 @@
       </div>
     </div>
     <div class="form-row">
-
       <div class="form-group col-md-6">
-        <label for="inputSellerName">Your Name</label>
-        <input formControlName="sellerName" type="text" class="form-control" id="inputSellerName" placeholder="Your Name">
+        <label for="select">Choose Category</label>
+
+        <select (change)="onChange($event.target.value)" class="form-control" name="category" id="select">
+          <option value="category" class="option" disabled selected>choose a category</option>
+          <option *ngFor="let category of categoriesArr" value={{category.category}}>{{category.category}}</option>
+        </select>
       </div>
       <div class="form-group col-md-6">
         <label for="inputSellerPhone">Phone Number</label>

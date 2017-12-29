@@ -32,8 +32,18 @@
           </div>
         </div>
       </div>
+      <div class="form-group col-md-6">
+        <label for="inputFirstName">First Name</label>
+        <input formControlName="firstName" type="email" class="form-control" id="inputFirstName" placeholder="First Name">
+        <div *ngIf="register.get('firstName').errors && register.get('firstName').touched" class="alert alert-danger">First Name is required</div>
+      </div>
+      <div class="form-group col-md-6">
+        <label for="inputLastName">Last Name</label>
+        <input formControlName="lastName" type="text" class="form-control" id="inputLastName" placeholder="Last Name">
+        <div *ngIf="register.get('lastName').errors && register.get('lastName').touched" class="alert alert-danger">Last Name is required</div>
+      </div>
     </div>
-    <button type="submit" class="btn btn-primary">Sign in</button>
+    <button type="submit" class="btn btn-primary">Register</button>
     <a routerLink="/login">Already have an account?</a>
   </form>
 </div>

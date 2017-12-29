@@ -12,12 +12,14 @@ import {Router} from "@angular/router";
 export class CreateOfferComponent implements OnInit {
   public create: FormGroup;
   public model: OfferModel;
-
+  public category: string;
+  public categoriesArr: any;
+  public formErrors: boolean = true;
 
   constructor(private fb: FormBuilder,
               private reqHandlerServer: ReqHandlerService,
               private router: Router) {
-    this.model = new OfferModel('', '', '', '', 0, 0, '', '')
+    this.model = new OfferModel('','', '', '','', '', 0, 0, '', '', '')
   }
 
   ngOnInit() {
@@ -28,34 +30,91 @@ export class CreateOfferComponent implements OnInit {
       description: ['',[Validators.required, Validators.minLength(15), Validators.maxLength(400)]],
       price: ['', [Validators.required, Validators.min(1), Validators.max(99999)]],
       area: ['', [Validators.required, Validators.min(15), Validators.max(50000)]],
-      sellerName: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(20)]],
       sellerPhone: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(20)]]
+    });
+
+    this.reqHandlerServer.getAllCategories().subscribe(data=>{
+      this.categoriesArr = data;
     })
+  }
+
+  onChange(category) {
+    this.category = category;
   }
 
   submit(): void {
 
-    if(this.create.value['image'].startsWith('http')){
-      this.model.image = this.create.value['image'];
-    }
-
-    if(this.create.value['image'] === ''){
+    if(this.create.value['image'] === '' || !this.create.value['image'].startsWith('http')){
       this.model.image = 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/480px-No_image_available.svg.png';
     }
 
+    if(this.create.value['image'].startsWith('http')){
+      this.model.image = this.create.value['image'];
+
+    }
+    this.model.author = localStorage.getItem('username');
     this.model.title = this.create.value['title'];
     this.model.address = this.create.value['address'];
     this.model.description = this.create.value['description'];
+    this.model.category = this.category;
     this.model.price = this.create.value['price'];
     this.model.area = this.create.value['area'];
-    this.model.sellerName = this.create.value['sellerName'];
+    this.model.sellerName = localStorage.getItem('firstName') + ' ' + localStorage.getItem('lastName');
+    this.model.sellerEmail = localStorage.getItem('email');
     this.model.sellerPhone = this.create.value['sellerPhone'];
 
-    this.reqHandlerServer.createOffer(this.model).subscribe(data =>{
-      this.router.navigate(['/offers'])
-    }, err =>{
-      console.log(err.message)
-    })
-  }
+    if(this.model.title.length < 4 || this.model.title.length > 30){
+      console.log('Title must be between 4 and 30 symbols');
+      this.formErrors = true;
+      return;
+    }
+    if(this.model.address.length < 5 || this.model.address.length > 40){
+      console.log('Address must be between 5 and 40 symbols');
+      this.formErrors = true;
+      return;
+    }
 
+    if(this.model.description.length < 15 || this.model.description.length > 400){
+      console.log('Descrition must be between 15 and 400 symbols');
+      this.formErrors = true;
+      return;
+    }
+
+    if(!Number.isInteger(this.model.price)){
+      console.log('Price must be a number');
+      this.formErrors = true;
+      return;
+    }
+
+    if(!Number.isInteger(this.model.area)){
+      console.log('Area must be a number');
+      this.formErrors = true;
+      return;
+    }
+
+
+    this.categoriesArr.map(data=>{
+      if(data.category.indexOf(this.category) !== -1){
+        this.formErrors = false;
+          return;
+      }
+
+    });
+
+    if(this.model.sellerPhone.length < 6 || this.model.sellerPhone.length > 20){
+      console.log('Phone must be between 6 and 20 symbols');
+      this.formErrors = true;
+      return;
+    }
+
+    this.formErrors = false;
+
+    if(!this.formErrors){
+      this.reqHandlerServer.createOffer(this.model).subscribe(data =>{
+        this.router.navigate(['/offers'])
+      }, err =>{
+        console.log(err.message)
+      })
+    }
+  }
 }

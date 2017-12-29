@@ -326,13 +326,15 @@ a {
       display: block !important; } }
   .probootstrap-media .probootstrap-media-image {
     background-size: cover;
+    min-height: 250px!important;
     width: 50%; }
     @media (max-width: 991px) {
       .probootstrap-media .probootstrap-media-image {
         width: 100%;
         height: 200px; } }
   .probootstrap-media .media-body {
-    padding: 2em; }
+
+    padding: 1em; }
 
 .probootstrap-form {
   margin-bottom: 0px;

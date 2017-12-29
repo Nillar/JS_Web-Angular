@@ -1,3 +1,61 @@
-<p>
-  edit-offer works!
-</p>
+<div class="container main-body">
+  <h1>EDIT THIS OFFER</h1>
+  <hr>
+  <form (ngSubmit)="submit(edit)" [formGroup]='edit'>
+    <div class="form-row">
+      <div class="form-group col-md-6">
+        <label for="inputTitle">Title</label>
+        <input formControlName="title" type="text" class="form-control" id="inputTitle" value={{currentOffer?.title}} placeholder="Title">
+        <div *ngIf="edit.get('title').errors && edit.get('title').touched" class="alert alert-danger">Title must be between 4 and 30 symbols</div>
+      </div>
+      <div class="form-group col-md-6">
+        <label for="inputImage">Image URL (optional)</label>
+        <input formControlName="image" type="text" class="form-control" id="inputImage" value={{currentOffer?.image}} placeholder="Image URL">
+      </div>
+    </div>
+    <div class="form-group">
+      <div>
+        <label for="inputAddress">Address</label>
+        <input formControlName="address" type="text" class="form-control" id="inputAddress" value={{currentOffer?.address}} placeholder="Address">
+        <div *ngIf="edit.get('address').errors && edit.get('address').touched" class="alert alert-danger">Address must be between 5 and 40 symbols</div>
+      </div>
+    </div>
+    <div class="form-group">
+      <div>
+        <label for="inputDescription">Description</label>
+        <textarea style="resize: none; height: 100px" formControlName="description" type="text" class="form-control" id="inputDescription" value={{currentOffer?.description}} placeholder="Description"></textarea>
+        <div *ngIf="edit.get('description').errors && edit.get('description').touched" class="alert alert-danger">Description must be between 15 and 400 symbols</div>
+      </div>
+    </div>
+    <div class="form-group">
+      <div>
+        <label for="inputPrice">Price in EUR</label>
+        <input formControlName="price" type="number" class="form-control" id="inputPrice" value={{currentOffer?.price}} placeholder="Price">
+        <div *ngIf="edit.get('price').errors && edit.get('price').touched" class="alert alert-danger">Price must be between 1 and 99999</div>
+      </div>
+    </div>
+    <div class="form-group">
+      <div>
+        <label for="inputArea">Area (square meters)</label>
+        <input formControlName="area" type="number" class="form-control" id="inputArea" value={{currentOffer?.area}} placeholder="Area">
+        <div *ngIf="edit.get('area').errors && edit.get('area').touched" class="alert alert-danger">Area must be between 15 and 50000</div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group col-md-6">
+        <label for="select">Choose Category</label>
+
+        <select (change)="onChange($event.target.value)" class="form-control" name="category" id="select">
+          <option value="category" class="option" disabled>choose a category</option>
+          <option value={{currentOffer?.category}} class="option" selected disabled>{{currentOffer?.category}}</option>
+          <option *ngFor="let category of categoriesArr" value={{category.category}}>{{category.category}}</option>
+        </select>
+      </div>
+      <div class="form-group col-md-6">
+        <label for="inputSellerPhone">Phone Number</label>
+        <input formControlName="sellerPhone" type="text" class="form-control" id="inputSellerPhone" value={{currentOffer?.sellerPhone}} placeholder="Phone number">
+      </div>
+    </div>
+    <button type="submit" class="btn btn-primary">Publish</button>
+  </form>
+</div>
