@@ -43,7 +43,7 @@
         <div *ngIf="register.get('lastName').errors && register.get('lastName').touched" class="alert alert-danger">Last Name is required</div>
       </div>
     </div>
-    <button type="submit" class="btn btn-primary">Register</button>
+    <button type="submit" [disabled]="register.invalid" class="btn btn-primary">Register</button>
     <a routerLink="/login">Already have an account?</a>
   </form>
 </div>

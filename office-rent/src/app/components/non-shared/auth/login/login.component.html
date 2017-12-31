@@ -19,7 +19,7 @@
       </div>
     </div>
 
-    <button type="submit" style="margin-left: 15px" class="btn btn-primary">Sign in</button>
+    <button type="submit" [disabled]="login.invalid" style="margin-left: 15px"   class="btn btn-primary">Sign in</button>
     <a routerLink="/register">Don't have an account?</a>
   </form>
 </div>

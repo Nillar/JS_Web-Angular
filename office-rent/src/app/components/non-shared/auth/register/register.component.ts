@@ -32,7 +32,7 @@ export class RegisterComponent implements OnInit{
     private fb: FormBuilder,
     private reqHandlerService: ReqHandlerService,
     private value: DuplicateCheck) {
-    this.model = new RegisterModel('', '', '','', '');
+    this.model = new RegisterModel('','','','','','','');
     this.loginModel = new LoginModel('','');
   }
 
@@ -64,6 +64,8 @@ export class RegisterComponent implements OnInit{
     this.model.email = this.register.value['email'];
     this.model.firstName = this.register.value['firstName'];
     this.model.lastName = this.register.value['lastName'];
+    this.model.personalInfo = '';
+    this.model.role = 'user';
 
     this.loginModel.username = this.register.value['username'];
     this.loginModel.password = this.register.value.auth['password'];
@@ -96,16 +98,17 @@ export class RegisterComponent implements OnInit{
       })
   }
 
+
   successfulRegister(data): void {
     this.reqHandlerService.login(this.loginModel).subscribe(data=>{
-
       this.reqHandlerService.authtoken = data['_kmd']['authtoken'];
       localStorage.setItem('authtoken', data['_kmd']['authtoken']);
       localStorage.setItem('username', data['username']);
       localStorage.setItem('firstName', data['firstName']);
       localStorage.setItem('lastName', data['lastName']);
       localStorage.setItem('email', data['email']);
-      this.router.navigate(['/'])
+      localStorage.setItem('role', data['role']);
+      this.router.navigate(['/']);
     });
     this.registerFail = false;
     // this.router.navigate(['/']);

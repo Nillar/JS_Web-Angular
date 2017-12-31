@@ -8,25 +8,33 @@ import {LoginModel} from '../models/login.model';
 import {OfferModel} from "../models/offer.model";
 import {CommentModel} from "../models/comment.model";
 import {CategoryModel} from "../models/category.model";
+import {EditProfileModel} from "../models/edit-profile.model";
 
 const appKey = "kid_HJZ7bTJmz";// APP KEY HERE;
 const appSecret = "91d79a4cf2494db3b3d724d82388e701"; // APP SECRET HERE;
+
 const registerUrl = `https://baas.kinvey.com/user/${appKey}`;
 const loginUrl = `https://baas.kinvey.com/user/${appKey}/login`;
 const logoutUrl = `https://baas.kinvey.com/user/${appKey}/_logout`;
 
 const getAllOffersUrl = `https://baas.kinvey.com/appdata/${appKey}/offers?query={}&sort={"_kmd.ect": -1}`;
-const getMyOffersUrl = `https://baas.kinvey.com/appdata/${appKey}/offers`
+const getMyOffersUrl = `https://baas.kinvey.com/appdata/${appKey}/offers`;
 const getOfferDetailsUrl = `https://baas.kinvey.com/appdata/${appKey}/offers/`;
+const getOfferCommentsUrl = `https://baas.kinvey.com/appdata/${appKey}/comments`;
+const getAllCategoriesUrl = `https://baas.kinvey.com/appdata/${appKey}/categories`;
+const getUserDetailsUrl = `https://baas.kinvey.com/user/${appKey}`;
+
 const createOfferUrl = `https://baas.kinvey.com/appdata/${appKey}/offers`;
 const createCommentUrl = `https://baas.kinvey.com/appdata/${appKey}/comments`;
 const createCategoryUrl = `https://baas.kinvey.com/appdata/${appKey}/categories`;
-const getOfferCommentsUrl = `https://baas.kinvey.com/appdata/${appKey}/comments`;
-const getAllCategoriesUrl = `https://baas.kinvey.com/appdata/${appKey}/categories`;
 
 const deleteOfferUrl = `https://baas.kinvey.com/appdata/${appKey}/offers/`;
 const deleteAllOfferCommentsUrl = `https://baas.kinvey.com/appdata/${appKey}/comments`;
+const deleteCategoryUrl = `https://baas.kinvey.com/appdata/${appKey}/categories/`;
+
 const editOfferUrl = `https://baas.kinvey.com/appdata/${appKey}/offers/`;
+const editMyProfileUrl = `https://baas.kinvey.com/user/${appKey}/`;
+
 
 @Injectable()
 export class ReqHandlerService {
@@ -138,6 +146,15 @@ export class ReqHandlerService {
     )
   }
 
+  getUserDetails(username){
+    return this.http.get(
+      getUserDetailsUrl + `?query={"username":"${username}"}`,
+      {
+        headers: this.createAuthHeaders('Kinvey')
+      }
+    )
+  }
+
   createOffer(offerModel: OfferModel): Observable<Object> {
     return this.http.post(
       createOfferUrl,
@@ -186,12 +203,31 @@ export class ReqHandlerService {
     )
   }
 
+  deleteCategory(id){
+    return this.http.delete(
+      deleteCategoryUrl + id,
+      {
+        headers: this.createAuthHeaders('Kinvey')
+      }
+    )
+  }
+
   editOffer(offerModel: OfferModel, id){
     return this.http.put(
       editOfferUrl + id,
       JSON.stringify(offerModel),
       {
         headers: this.createAuthHeaders('Kinvey')
+      }
+    )
+  }
+
+  editMyProfile(editProfileModel: EditProfileModel, id){
+    return this.http.put(
+      editMyProfileUrl + id,
+      JSON.stringify(editProfileModel),
+      {
+        headers:this.createAuthHeaders('Kinvey')
       }
     )
   }

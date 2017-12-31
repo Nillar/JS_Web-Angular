@@ -1,12 +1,11 @@
-<div class="container main-body col-md-12">
-  <h1>ACTIVE OFFERS</h1>
+<div class="container main-body">
+  <h1>MY OFFERS</h1>
   <hr>
   <div class="form-row">
-    <div *ngFor="let offer of offers | paginate: { itemsPerPage: 6, currentPage: p }" class="col-lg-6">
+    <div *ngFor="let offer of offers | paginate: { itemsPerPage: 6, currentPage: p }" class="col-md-6">
       <div
-        class="media probootstrap-media d-flex align-items-stretch mb-lg-4 probootstrap-animate fadeInUp probootstrap-animated">
+        class="media probootstrap-media d-flex align-items-stretch mb-4 probootstrap-animate fadeInUp probootstrap-animated">
         <div class="probootstrap-media-image">
-
           <img style="max-height: 250px; max-width: 250px;" src="{{offer.image}}"/>
         </div>
         <div class="media-body">

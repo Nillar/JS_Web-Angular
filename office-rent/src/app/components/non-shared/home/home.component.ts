@@ -11,29 +11,23 @@ import {CategoryModel} from "../../../models/category.model";
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit {
-  public categoryName: FormGroup;
-  public model: CategoryModel;
+  public isLogged: boolean = false;
+  public isAdmin: boolean = false;
 
-  constructor(
-    // private router: Router,
-    // private fb: FormBuilder,
-    // private reqHandlerService: ReqHandlerService
+  constructor(private reqHandlerService: ReqHandlerService
   ) {
-    // this.model = new CategoryModel('');
+
   }
 
   ngOnInit() {
-    // this.categoryName = this.fb.group({
-    //   category: ['',[Validators.required]]
-    // })
-  }
+    if(localStorage.getItem('username') !== null){
+      this.isLogged = true;
+    }
 
-  // submit(){
-  //   this.model.category = this.categoryName.value['category'];
-  //
-  //   this.reqHandlerService.createCategory(this.model).subscribe(data=>{
-  //     console.log(data);
-  //   })
-  // }
+    if(localStorage.getItem('role') === 'admin'){
+      this.isAdmin = true;
+    }
+
+  }
 
 }

@@ -13,15 +13,16 @@
     <div routerLink="/create" class="col-md-5 nagivation-panels">
       <h2>PUBLISH AN OFFER</h2>
       <hr>
-      <a routerLink="/create"><i style="font-size: 200px" class="fas fa-plus-square"></i></a>
+      <a routerLink="/create"><i style="font-size: 180px" class="fas fa-edit"></i></a>
     </div>
   </div>
-  <!--<form (ngSubmit)="submit(category)" [formGroup]="categoryName">-->
-    <!--<div class="form-group col-md-6">-->
-      <!--<label for="inputEmail4">Category</label>-->
-      <!--<input formControlName="category" type="text" class="form-control" id="inputEmail4" placeholder="Category">-->
-      <!--<div *ngIf="categoryName.get('category').errors && categoryName.get('category').touched" class="alert alert-danger">Category is required</div>-->
-    <!--</div>-->
-    <!--<button type="submit" class="btn btn-primary">Create Category</button>-->
-  <!--</form>-->
+  <div *ngIf="isAdmin" style="margin-top: 10px" class="form-row col-md-12 ">
+    <div class="col-md-3"></div>
+    <div routerLink="/admin" class="col-md-6 nagivation-panels">
+      <h2>ADMIN PANEL</h2>
+      <hr>
+      <a routerLink="/admin"><i style="font-size: 200px" class="fas fa-cogs"></i></a>
+    </div>
+    <div class="col-md-3"></div>
+  </div>
 </div>

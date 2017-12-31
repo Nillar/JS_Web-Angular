@@ -56,6 +56,6 @@
         <input formControlName="sellerPhone" type="text" class="form-control" id="inputSellerPhone" value={{currentOffer?.sellerPhone}} placeholder="Phone number">
       </div>
     </div>
-    <button type="submit" class="btn btn-primary">Publish</button>
+    <button type="submit" [disabled]="edit.invalid" class="btn btn-primary">Publish</button>
   </form>
 </div>

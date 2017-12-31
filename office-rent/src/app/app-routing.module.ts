@@ -7,6 +7,7 @@ import {ErrorComponent} from "./components/shared/error/error.component";
 
 import {AuthGuard} from "./guards/auth.guard";
 import {LogoutComponent} from "./components/non-shared/auth/logout/logout.component";
+import {AdminGuard} from "./guards/admin.guard";
 
 const appRoutes: Routes = [
   {pathMatch: 'full', path: '', component: HomeComponent},
@@ -34,9 +35,19 @@ const appRoutes: Routes = [
     loadChildren: './components/non-shared/create-offer/create-offer.module#CreateOffer'
   },
   {
-    path: 'profile',
+    path: 'my-posts',
+    canActivate: [AuthGuard],
+    loadChildren: './components/non-shared/my-posts/my-posts.module#MyPostsList'
+  },
+  {
+    path: `profile/:username`,
     canActivate: [AuthGuard],
     loadChildren: './components/non-shared/profile/profile.module#ProfileList'
+  },
+  {
+    path: 'admin',
+    canActivate: [AuthGuard, AdminGuard],
+    loadChildren: './components/admin-panel/admin-panel.module#AdminPanel'
   },
   {path: '**', component: ErrorComponent}
 ];

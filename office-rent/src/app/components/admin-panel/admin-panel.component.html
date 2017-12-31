@@ -1,0 +1,50 @@
+<div class="container">
+  <div class="form-row">
+    <div class="col-md-7" style="margin-top: 15px">
+      <article class="panel panel-success">
+        <div class="panel-heading">
+          <h2 class="panel-title">All Categories</h2>
+          <hr>
+        </div>
+        <div *ngIf="categoriesCount>5" class="pagination">
+          <pagination-controls (pageChange)="p = $event"></pagination-controls>
+        </div>
+
+        <ul class="list-group" style="min-height: 275px">
+          <li *ngFor="let category of categoriesArr  | paginate: { itemsPerPage: 5, currentPage: p }"
+              class="list-group-item" value={{category.category}}><h5 style="display: inline-block">
+            {{category.category}}</h5>
+            <button class="btn btn-danger" style="float:right; padding: 6px 12px;" (click)="delete(category?._id)"
+                    type="submit">Delete Category
+            </button>
+          </li>
+        </ul>
+      </article>
+    </div>
+
+    <div class="col-md-1"></div>
+
+    <div class="col-md-4 panel-heading" style="margin-top: 15px;">
+      <h2 class="panel-title">Add Category</h2>
+      <hr>
+
+      <!--<hr style="width: 250px; float: left">-->
+      <div class="form-row">
+        <form (ngSubmit)="submit(create)" [formGroup]='createCategory'>
+          <div class="form-row">
+            <div class="form-group col-md-6">
+
+              <input formControlName="category" style="width: 250px" type="text" id="inputCategory"/>
+              <button type="submit" style="margin-top: 10px; width: 250px;" class="btn btn-success"
+                      value="Create Category">
+                Create Category
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+  </div>
+
+</div>

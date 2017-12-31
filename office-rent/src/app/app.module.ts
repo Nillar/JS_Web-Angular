@@ -22,7 +22,9 @@ import {LogoutComponent} from "./components/non-shared/auth/logout/logout.compon
 
 // GUARDS
 import {AuthGuard} from "./guards/auth.guard";
+import {AdminGuard} from "./guards/admin.guard";
 import {ReqHandlerService} from "./services/req-handler.service";
+
 
 @NgModule({
   declarations: [
@@ -44,7 +46,7 @@ import {ReqHandlerService} from "./services/req-handler.service";
     HttpClientModule,
     CommonModule
   ],
-  providers: [AuthGuard, ReqHandlerService, DuplicateCheck],
+  providers: [AuthGuard, AdminGuard, ReqHandlerService, DuplicateCheck],
   bootstrap: [AppComponent]
 })
 export class AppModule {

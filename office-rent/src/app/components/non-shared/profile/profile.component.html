@@ -1,8 +1,69 @@
-<div class="container main-body">
-  <h1>MY OFFERS</h1>
+<div class="container">
+  <h2 *ngIf="isCurrentUser" style="margin-top: 20px">MY PROFILE PAGE</h2>
+  <h2 *ngIf="!isCurrentUser" style="margin-top: 20px">USER PROFILE PAGE</h2>
+  <hr>
+
+  <form *ngIf="editInfo" (ngSubmit)="submit(editProfile)" [formGroup]='editProfile'>
+    <div class="form-row">
+      <div class="form-group col-md-6">
+        <label for="inputEmail4">Email</label>
+        <input formControlName="email" type="email" class="form-control" id="inputEmail4"  value={{currentUser?.email}}>
+        <div *ngIf="editProfile.get('email').errors && editProfile.get('email').touched" class="alert alert-danger">
+          Email is required
+        </div>
+      </div>
+
+    </div>
+    <div class="form-row">
+      <div class="form-group col-md-6">
+        <label for="inputDescription2">Personal Info</label>
+        <textarea style="resize: none; height: 100px" formControlName="personalInfo" type="text" class="form-control"
+                  id="inputDescription2"  value={{currentUser?.personalInfo}}></textarea>
+        <div *ngIf="editProfile.get('personalInfo').errors && editProfile.get('personalInfo').touched"
+             class="alert alert-danger">Personal Info must be between 15 and 400 symbols
+        </div>
+      </div>
+    </div>
+  </form>
+  <form *ngIf="!editInfo" (ngSubmit)="submit(editProfile)" [formGroup]='editProfile'>
+    <div class="form-row">
+      <div class="form-group col-md-6">
+        <label for="inputEmail1">Email</label>
+        <input disabled formControlName="email" type="email" class="form-control" id="inputEmail1" value={{currentUser?.email}}>
+        <div *ngIf="editProfile.get('email').errors && editProfile.get('email').touched" class="alert alert-danger">
+          Email is required
+        </div>
+      </div>
+
+    </div>
+    <div class="form-row">
+      <div class="form-group col-md-6">
+        <label for="inputDescription">Personal Info</label>
+        <textarea disabled style="resize: none; height: 100px" formControlName="personalInfo" type="text" class="form-control"
+                  id="inputDescription" value={{currentUser?.personalInfo}}></textarea>
+        <div *ngIf="editProfile.get('personalInfo').errors && editProfile.get('personalInfo').touched"
+             class="alert alert-danger">Personal Info must be between 15 and 400 symbols
+        </div>
+      </div>
+    </div>
+  </form>
+  <div>
+    <button type="button" *ngIf="isCurrentUser" (click)="editInfoClicked()" [disabled]="editInfo" class="btn btn-dark">
+      Edit Info
+    </button>
+
+    <button type="submit" *ngIf="isCurrentUser" (click)="saveInfoClicked()" [disabled]="editProfile.invalid || !editInfo" class="btn btn-primary">Save
+      Info
+    </button>
+  </div>
+</div>
+
+<div class="container">
+
+  <h3>Published Offers</h3>
   <hr>
   <div class="form-row">
-    <div *ngFor="let offer of offers | paginate: { itemsPerPage: 6, currentPage: p }" class="col-md-6">
+    <div *ngFor="let offer of offers | paginate: { itemsPerPage: 2, currentPage: p }" class="col-md-6">
       <div
         class="media probootstrap-media d-flex align-items-stretch mb-4 probootstrap-animate fadeInUp probootstrap-animated">
         <div class="probootstrap-media-image">
@@ -17,7 +78,7 @@
       </div>
     </div>
   </div>
-  <div *ngIf="offersCount>6" class="pagination">
+  <div *ngIf="offersCount>2" class="pagination">
     <pagination-controls (pageChange)="p = $event"></pagination-controls>
   </div>
 </div>

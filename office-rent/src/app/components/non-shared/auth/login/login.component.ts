@@ -40,7 +40,6 @@ export class LoginComponent implements OnInit{
     this.reqHandlerService.login(this.model)
       .subscribe(
         data => {
-          console.log(data);
           this.successfulLogin(data);
         },
         err => {
@@ -60,6 +59,7 @@ export class LoginComponent implements OnInit{
     localStorage.setItem('firstName', data['firstName']);
     localStorage.setItem('lastName', data['lastName']);
     localStorage.setItem('email', data['email']);
+    localStorage.setItem('role', data['role']);
     this.loginFail = false;
     this.router.navigate(['/']);
   }
