@@ -8,13 +8,11 @@ import {Router} from "@angular/router";
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent implements OnInit {
-  public role: string;
   public username: string;
   public profileLinkVariable: string;
 
   constructor(private reqHandlerService: ReqHandlerService,
               private router:Router) {
-    this.role = 'user';
   }
 
   ngOnInit() {
@@ -22,16 +20,7 @@ export class HeaderComponent implements OnInit {
       this.username = localStorage.getItem('username');
     }
 
-    if(this.username !== undefined){
-      this.reqHandlerService.getUserDetails(this.username).subscribe(data=>{
-        this.role = data[0].role;
-      })
-    }
 
-  }
-
-  redirectToAdmin(){
-    this.router.navigate(['/admin'])
   }
 
   loggedIn() {
@@ -45,11 +34,4 @@ export class HeaderComponent implements OnInit {
 
     this.router.navigate([`/profile/${localStorage.getItem('username')}`])
   }
-  isAdmin() {
-    if (this.role === 'admin') {
-      return true
-    }
-    return false
-  }
-
 }

@@ -16,7 +16,11 @@ export class OfferDetailsComponent implements OnInit {
   public comment: FormGroup;
   public model: CommentModel;
   public offerComments: Object;
+  public sellerEmail: string;
   public isAuthor: boolean = false;
+  public profileLink: string;
+  public isAdmin: boolean = false;
+  // public anotherUserAccountLink: string;
 
   constructor(private router: Router, private route: ActivatedRoute, private reqHandlerService: ReqHandlerService, private fb: FormBuilder) {
     this.username = localStorage.getItem('username');
@@ -25,12 +29,20 @@ export class OfferDetailsComponent implements OnInit {
 
 
   ngOnInit() {
+    if(localStorage.getItem('role') === 'admin'){
+      this.isAdmin = true;
+    }
+
+    console.log(this.isAdmin);
+    this.sellerEmail = localStorage.getItem('email');
     this.offerId = this.route.snapshot.paramMap.get('id');
     this.comment = this.fb.group({
       content: ['', [Validators.minLength(1), Validators.maxLength(200)]]
     });
 
     this.reqHandlerService.getOfferDetails(this.offerId).subscribe(data => {
+      this.profileLink = `/profile/${data['author']}`;
+
       this.offer = data;
       if(this.offer['author'] === localStorage.getItem('username')){
         this.isAuthor = true;
@@ -40,6 +52,10 @@ export class OfferDetailsComponent implements OnInit {
     this.reqHandlerService.getOfferComments(this.offerId).subscribe(data=>{
       this.offerComments = data;
     })
+  }
+
+  anotherUserAccountLink(username){
+    this.router.navigate([`/profile/${username}`]);
   }
 
   submit() {
@@ -62,7 +78,6 @@ export class OfferDetailsComponent implements OnInit {
 
   delete(id){
     this.reqHandlerService.deleteOffer(id).subscribe(data=>{
-      console.log(data);
       this.reqHandlerService.deleteAllOfferComments(this.offerId).subscribe(data2 =>{
         this.router.navigate(['/offers']);
       })

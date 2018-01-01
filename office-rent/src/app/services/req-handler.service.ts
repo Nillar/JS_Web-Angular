@@ -18,6 +18,7 @@ const loginUrl = `https://baas.kinvey.com/user/${appKey}/login`;
 const logoutUrl = `https://baas.kinvey.com/user/${appKey}/_logout`;
 
 const getAllOffersUrl = `https://baas.kinvey.com/appdata/${appKey}/offers?query={}&sort={"_kmd.ect": -1}`;
+const getOffersByUsernameUrl = `https://baas.kinvey.com/appdata/${appKey}/offers`;
 const getMyOffersUrl = `https://baas.kinvey.com/appdata/${appKey}/offers`;
 const getOfferDetailsUrl = `https://baas.kinvey.com/appdata/${appKey}/offers/`;
 const getOfferCommentsUrl = `https://baas.kinvey.com/appdata/${appKey}/comments`;
@@ -113,6 +114,15 @@ export class ReqHandlerService {
   getMyOffers(){
     return this.http.get(
       getMyOffersUrl + `?query={"author":"${localStorage.getItem(`username`)}"}&sort={"_kmd.ect": -1}`,
+      {
+        headers: this.createAuthHeaders('Kinvey')
+      }
+    )
+  }
+
+  getOffersByUsername(username){
+    return this.http.get(
+      getOffersByUsernameUrl + `?query={"author":"${username}"}&sort={"_kmd.ect": 1}`,
       {
         headers: this.createAuthHeaders('Kinvey')
       }

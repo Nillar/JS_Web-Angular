@@ -29,7 +29,7 @@
     <div class="form-row">
       <div class="form-group col-md-6">
         <label for="inputEmail1">Email</label>
-        <input disabled formControlName="email" type="email" class="form-control" id="inputEmail1" value={{currentUser?.email}}>
+        <input disabled formControlName="email" type="text" class="form-control" id="inputEmail1" value={{currentUser?.email}}>
         <div *ngIf="editProfile.get('email').errors && editProfile.get('email').touched" class="alert alert-danger">
           Email is required
         </div>

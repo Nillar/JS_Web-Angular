@@ -2,7 +2,6 @@ import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {ReqHandlerService} from "../../../services/req-handler.service";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {RegisterModel} from "../../../models/register.model";
 import {DuplicateCheck} from "../auth/register/validate-email";
 import {EditProfileModel} from "../../../models/edit-profile.model";
 
@@ -31,12 +30,11 @@ export class ProfileComponent implements OnInit {
               private fb: FormBuilder,
               private route: ActivatedRoute,
               private value: DuplicateCheck) {
-    this.model = new EditProfileModel('', '','', '','');
+    this.model = new EditProfileModel('', '', '', '', '', '');
     this.username = this.route.snapshot.paramMap.get('username');
   }
 
   ngOnInit() {
-
     if (this.username === localStorage.getItem('username')) {
       this.isCurrentUser = true;
     }
@@ -44,23 +42,27 @@ export class ProfileComponent implements OnInit {
     this.reqHandlerService.getUserDetails(this.username).subscribe(data => {
       this.currentUser = data[0];
       this.userId = data[0]._id;
-
       this.model.email = data[0].email;
       this.model.personalInfo = data[0].personalInfo;
       this.model.firstName = data[0].firstName;
       this.model.lastName = data[0].lastName;
+      this.model.role = data[0].role;
+      this.model.username = data[0].username;
 
       this.editProfile = this.fb.group({
         email: [data[0].email, [Validators.required, Validators.pattern(new RegExp(emailPattern)), this.checkMail.bind(this)]],
         personalInfo: [data[0].personalInfo, [Validators.maxLength(400)]]
-      })
+      });
+
+
     });
-    this.reqHandlerService.getMyOffers().subscribe(data => {
+    this.reqHandlerService.getOffersByUsername(this.username).subscribe(data => {
       this.offers = data;
       this.offersCount = this.offers.length;
     }, err => {
       console.log(err.message);
     });
+
 
     this.editProfile = this.fb.group({
       email: ['', [Validators.required, Validators.pattern(new RegExp(emailPattern)), this.checkMail.bind(this)]],
@@ -79,18 +81,24 @@ export class ProfileComponent implements OnInit {
     this.editInfo = false;
     this.model.email = this.editProfile.value['email'];
     this.model.personalInfo = this.editProfile.value['personalInfo'];
-    this.model.role = 'user';
 
-    this.reqHandlerService.editMyProfile(this.model, this.userId).subscribe(data =>{
-      this.reqHandlerService.getUserDetails(this.username).subscribe(data2=>{
+    this.reqHandlerService.editMyProfile(this.model, this.userId).subscribe(data => {
+      localStorage.setItem('authtoken', data['_kmd']['authtoken']);
+      localStorage.setItem('email', data['email']);
+
+      this.reqHandlerService.getUserDetails(this.username).subscribe(data2 => {
         this.currentUser = data2[0];
-        this.userId = data2[0]._id;
+
+        this.editProfile = this.fb.group({
+          email: [data2[0].email, [Validators.required, Validators.pattern(new RegExp(emailPattern)), this.checkMail.bind(this)]],
+          personalInfo: [data2[0].personalInfo, [Validators.maxLength(400)]]
+        });
 
         this.model.email = data2[0].email;
         this.model.personalInfo = data2[0].personalInfo;
         this.model.firstName = data2[0].firstName;
         this.model.lastName = data2[0].lastName;
-
+        this.model.role = data2[0].role;
       })
     })
   }

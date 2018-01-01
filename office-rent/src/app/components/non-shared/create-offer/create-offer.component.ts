@@ -19,7 +19,7 @@ export class CreateOfferComponent implements OnInit {
   constructor(private fb: FormBuilder,
               private reqHandlerServer: ReqHandlerService,
               private router: Router) {
-    this.model = new OfferModel('','', '', '','', '', 0, 0, '', '', '')
+    this.model = new OfferModel('','', '', '','', '', 0, 0, '', '')
   }
 
   ngOnInit() {
@@ -60,7 +60,7 @@ export class CreateOfferComponent implements OnInit {
     this.model.price = this.create.value['price'];
     this.model.area = this.create.value['area'];
     this.model.sellerName = localStorage.getItem('firstName') + ' ' + localStorage.getItem('lastName');
-    this.model.sellerEmail = localStorage.getItem('email');
+    // this.model.sellerEmail = localStorage.getItem('email');
     this.model.sellerPhone = this.create.value['sellerPhone'];
 
     if(this.model.title.length < 4 || this.model.title.length > 30){

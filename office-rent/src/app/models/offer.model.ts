@@ -9,7 +9,6 @@ export class OfferModel {
     public price: number,
     public area: number,
     public sellerName: string,
-    public sellerPhone: string,
-    public sellerEmail: string
+    public sellerPhone: string
   ){}
 }

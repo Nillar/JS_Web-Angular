@@ -17,15 +17,17 @@ export class EditOfferComponent implements OnInit {
   public formErrors: boolean = true;
   public currentOffer: Object;
   public offerId: string;
+  public sellerEmail: string;
 
   constructor(private fb: FormBuilder,
               private reqHandlerServer: ReqHandlerService,
               private router: Router,
               private route: ActivatedRoute) {
-    this.model = new OfferModel('','', '', '','', '', 0, 0, '', '', '')
+    this.model = new OfferModel('','', '', '','', '', 0, 0, '', '')
   }
 
   ngOnInit() {
+    this.sellerEmail = localStorage.getItem('email');
     this.offerId = this.route.snapshot.paramMap.get('id');
     this.reqHandlerServer.getOfferDetails(this.offerId).subscribe(data=>{
       this.currentOffer = data;
@@ -33,7 +35,7 @@ export class EditOfferComponent implements OnInit {
       this.model.author = localStorage.getItem('username');
       this.category = data['category'];
       this.model.sellerName = localStorage.getItem('firstName') + ' ' + localStorage.getItem('lastName');
-      this.model.sellerEmail = localStorage.getItem('email');
+      // this.model.sellerEmail = localStorage.getItem('email');
 
       this.edit = this.fb.group({
         title: [data['title'],[Validators.required, Validators.minLength(4), Validators.maxLength(30)]],
@@ -83,7 +85,7 @@ export class EditOfferComponent implements OnInit {
     this.model.price = this.edit.value['price'];
     this.model.area = this.edit.value['area'];
     this.model.sellerName = localStorage.getItem('firstName') + ' ' + localStorage.getItem('lastName');
-    this.model.sellerEmail = localStorage.getItem('email');
+    // this.model.sellerEmail = localStorage.getItem('email');
     this.model.sellerPhone = this.edit.value['sellerPhone'];
 
     if(this.model.title.length < 4 || this.model.title.length > 30){

@@ -10,7 +10,7 @@
           <pagination-controls (pageChange)="p = $event"></pagination-controls>
         </div>
 
-        <ul class="list-group" style="min-height: 275px">
+        <ul class="list-group" style="min-height: 295px">
           <li *ngFor="let category of categoriesArr  | paginate: { itemsPerPage: 5, currentPage: p }"
               class="list-group-item" value={{category.category}}><h5 style="display: inline-block">
             {{category.category}}</h5>
@@ -27,8 +27,6 @@
     <div class="col-md-4 panel-heading" style="margin-top: 15px;">
       <h2 class="panel-title">Add Category</h2>
       <hr>
-
-      <!--<hr style="width: 250px; float: left">-->
       <div class="form-row">
         <form (ngSubmit)="submit(create)" [formGroup]='createCategory'>
           <div class="form-row">

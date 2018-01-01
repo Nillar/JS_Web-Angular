@@ -4,7 +4,10 @@
     <div class="col-lg-12">
       <h1 class="mt-4">{{offer?.title}}</h1>
       <hr>
-      <p>Published on {{calcTime(offer?._kmd.lmt)}}</p>
+      <div class="form-row" style="text-align: center">
+        <div class="col-md-6"> Address: {{offer?.address}}</div>
+        <div class="col-md-6"> Published on {{calcTime(offer?._kmd.lmt)}}</div>
+      </div>
       <hr>
       <div style="text-align: center">
         <img class="img-fluid rounded" src={{offer?.image}} alt="">
@@ -34,13 +37,14 @@
               <h5>Phone: <strong>{{offer?.sellerPhone}}</strong></h5>
             </div>
             <div class="col-md-4">
-              <h5>Email: <strong>{{offer?.sellerEmail}}</strong></h5>
+              <h5>Email: <strong>{{sellerEmail}}</strong></h5>
             </div>
           </div>
         </div>
+       <h5 *ngIf="!isAuthor" class="card-header"><a [routerLink]="profileLink" class="nav-item">Click here for more offers by this user</a></h5>
       </div>
-      <button *ngIf="isAuthor" class="btn btn-dark" (click)="edit(offer?._id)" type="submit" >Edit Offer</button>
-      <button *ngIf="isAuthor" class="btn btn-danger" (click)="delete(offer?._id)" type="submit" >Delete Offer</button>
+      <button *ngIf="isAuthor || isAdmin" class="btn btn-dark" (click)="edit(offer?._id)" type="submit">Edit Offer</button>
+      <button *ngIf="isAuthor || isAdmin" class="btn btn-danger" (click)="delete(offer?._id)" type="submit">Delete Offer</button>
       <hr>
       <!-- Comments Form -->
       <div class="card my-4">
@@ -48,59 +52,26 @@
         <div class="card-body">
           <form (ngSubmit)="submit()" [formGroup]="comment">
             <div class="form-group">
-              <textarea formControlName="content" style="resize: none;" class="form-control" rows="3" type="text"></textarea>
+              <textarea formControlName="content" style="resize: none;" class="form-control" rows="3"
+                        type="text"></textarea>
             </div>
-            <div *ngIf="comment.get('content').errors" class="alert alert-danger">Comment must be between 1 and 200 symbols</div>
+            <div *ngIf="comment.get('content').errors" class="alert alert-danger">Comment must be between 1 and 200
+              symbols
+            </div>
             <button type="submit" class="btn btn-primary">Submit</button>
           </form>
         </div>
       </div>
-
-
       <!-- Single Comment -->
       <div *ngFor="let offerComment of offerComments" class="media mb-4">
         <img class="d-flex mr-3 rounded-circle" src="http://placehold.it/50x50" alt="">
         <div class="media-body">
-          <h4 class="mt-0">{{offerComment?.author}}</h4>
-          <span> commented on: {{calcTime(offerComment?._kmd.lmt)}}</span>
+          <h4 class="card-header" style="border-radius: 5px">{{offerComment?.content}}</h4>
+          <h6> commented on: {{calcTime(offerComment?._kmd.lmt)}} by <a routerLink="/" (click)="anotherUserAccountLink(offerComment?.author)" class="nav-item">{{offerComment?.author}}</a></h6>
           <br>
 
-          {{offerComment?.content}}
         </div>
       </div>
-
-      <!--&lt;!&ndash; Comment with nested comments &ndash;&gt;-->
-      <!--<div class="media mb-4">-->
-        <!--<img class="d-flex mr-3 rounded-circle" src="http://placehold.it/50x50" alt="">-->
-        <!--<div class="media-body">-->
-          <!--<h5 class="mt-0">Commenter Name</h5>-->
-          <!--Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin. Cras purus odio,-->
-          <!--vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec-->
-          <!--lacinia congue felis in faucibus.-->
-
-          <!--<div class="media mt-4">-->
-            <!--<img class="d-flex mr-3 rounded-circle" src="http://placehold.it/50x50" alt="">-->
-            <!--<div class="media-body">-->
-              <!--<h5 class="mt-0">Commenter Name</h5>-->
-              <!--Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin. Cras purus-->
-              <!--odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate-->
-              <!--fringilla. Donec lacinia congue felis in faucibus.-->
-            <!--</div>-->
-          <!--</div>-->
-
-          <!--<div class="media mt-4">-->
-            <!--<img class="d-flex mr-3 rounded-circle" src="http://placehold.it/50x50" alt="">-->
-            <!--<div class="media-body">-->
-              <!--<h5 class="mt-0">Commenter Name</h5>-->
-              <!--Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin. Cras purus-->
-              <!--odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate-->
-              <!--fringilla. Donec lacinia congue felis in faucibus.-->
-            <!--</div>-->
-          <!--</div>-->
-
-        <!--</div>-->
-      <!--</div>-->
-
     </div>
   </div>
 </div>
