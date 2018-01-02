@@ -1,8 +1,9 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewContainerRef} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {ReqHandlerService} from "../../../services/req-handler.service";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {CommentModel} from "../../../models/comment.model";
+import {ToastsManager} from "ng2-toastr";
 
 @Component({
   selector: 'office-offer-details',
@@ -21,18 +22,26 @@ export class OfferDetailsComponent implements OnInit {
   public profileLink: string;
   public isAdmin: boolean = false;
   public loader: boolean = true;
+
   // public anotherUserAccountLink: string;
 
-  constructor(private router: Router, private route: ActivatedRoute, private reqHandlerService: ReqHandlerService, private fb: FormBuilder) {
+  constructor(private router: Router,
+              private route: ActivatedRoute,
+              private reqHandlerService: ReqHandlerService,
+              private fb: FormBuilder,
+              private toastr: ToastsManager,
+              private vcr: ViewContainerRef) {
+    this.toastr.setRootViewContainerRef(vcr);
     this.username = localStorage.getItem('username');
     this.model = new CommentModel('', '', '');
   }
 
 
   ngOnInit() {
-    if(localStorage.getItem('role') === 'admin'){
+    if (localStorage.getItem('role') === 'admin') {
       this.isAdmin = true;
     }
+    this.model.content = '';
 
     this.sellerEmail = localStorage.getItem('email');
     this.offerId = this.route.snapshot.paramMap.get('id');
@@ -42,21 +51,25 @@ export class OfferDetailsComponent implements OnInit {
 
     this.reqHandlerService.getOfferDetails(this.offerId).subscribe(data => {
       this.profileLink = `/profile/${data['author']}`;
-
+      this.toastr.success('Details Loaded', 'Success');
       this.offer = data;
-      if(this.offer['author'] === localStorage.getItem('username')){
+      if (this.offer['author'] === localStorage.getItem('username')) {
         this.isAuthor = true;
       }
-
+    }, err => {
+      this.toastr.error('Loading unsuccessful', 'Error');
+      console.log(err.message);
+      this.router.navigate(['/**'])
+      return;
 
     });
-    this.reqHandlerService.getOfferComments(this.offerId).subscribe(data=>{
+    this.reqHandlerService.getOfferComments(this.offerId).subscribe(data => {
       this.offerComments = data;
       this.loader = false;
     })
   }
 
-  anotherUserAccountLink(username){
+  anotherUserAccountLink(username) {
     this.router.navigate([`/profile/${username}`]);
   }
 
@@ -65,34 +78,68 @@ export class OfferDetailsComponent implements OnInit {
     this.model.author = this.username;
     this.model.postId = this.offerId;
 
-    if(this.model.content.length < 1 || this.model.content.length > 200){
-      console.log('Comment must be between 1 and 200 symbols');
+    if (this.model.content.length < 1 || this.model.content.length > 200) {
+      this.toastr.error('Comment must be between 1 and 200 symbols', 'Error');
       return;
     }
 
-    this.loader = true;
-
-    this.reqHandlerService.createComment(this.model).subscribe(data =>{
-      this.reqHandlerService.getOfferComments(this.offerId).subscribe(data=>{
+    this.reqHandlerService.createComment(this.model).subscribe(data => {
+      this.reqHandlerService.getOfferComments(this.offerId).subscribe(data => {
         this.offerComments = data;
-        this.loader = false;
+        this.toastr.success('Comment Created', 'Success');
+        this.model.content='';
+        this.comment = this.fb.group({
+          content: ['', [Validators.minLength(1), Validators.maxLength(200)]]
+        });
       });
       this.router.navigate([`/offers/${this.offerId}`]);
+
       this.comment.reset();
-    })
+    });
   }
 
-  edit(id){
+  edit(id) {
     this.router.navigate([`/edit/${id}`]);
   }
 
-  delete(id){
+  deleteOffer(id) {
     this.loader = true;
-    this.reqHandlerService.deleteOffer(id).subscribe(data=>{
-      this.reqHandlerService.deleteAllOfferComments(this.offerId).subscribe(data2 =>{
+    this.reqHandlerService.deleteOffer(id).subscribe(data => {
+      this.toastr.info('Delete successful', 'Info');
+      this.reqHandlerService.deleteAllOfferComments(this.offerId).subscribe(data2 => {
         this.loader = false;
         this.router.navigate(['/offers']);
+
+      }, err2=> {
+        this.toastr.error('Deleting comments failed', 'Error');
+        this.loader = false;
+        return;
       })
+    }, err=>{
+      this.toastr.error('Deleting offer failed', 'Error');
+      this.loader = false;
+      return;
+    })
+  }
+
+  deleteComment(id) {
+    this.router.navigate([`/offers/${this.offerId}`]);
+    this.reqHandlerService.deleteComment(id).subscribe(data=>{
+      this.reqHandlerService.getOfferComments(this.offerId).subscribe(data2 => {
+        this.toastr.info('Comment Deleted');
+        this.offerComments = data2;
+        this.comment = this.fb.group({
+          content: ['', [Validators.minLength(1), Validators.maxLength(200)]]
+        });
+      }, err2=>{
+        this.toastr.error("Failed to load offer comments");
+        this.loader = false;
+      });
+      this.comment.reset();
+    }, err=>{
+      this.toastr.error('Failed to delete comment');
+      this.loader = false;
+      return;
     })
   }
 
@@ -126,8 +173,6 @@ export class OfferDetailsComponent implements OnInit {
         case 12:
           return 'December';
       }
-
-
     }
 
     return `${date.getDate()} ${getMonth(date.getMonth() + 1)} ${date.getFullYear()}`;

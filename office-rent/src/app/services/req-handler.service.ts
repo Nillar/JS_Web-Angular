@@ -18,6 +18,7 @@ const loginUrl = `https://baas.kinvey.com/user/${appKey}/login`;
 const logoutUrl = `https://baas.kinvey.com/user/${appKey}/_logout`;
 
 const getAllOffersUrl = `https://baas.kinvey.com/appdata/${appKey}/offers?query={}&sort={"_kmd.ect": -1}`;
+const getAllOffersByCategoryUrl = `https://baas.kinvey.com/appdata/${appKey}/offers`;
 const getOffersByUsernameUrl = `https://baas.kinvey.com/appdata/${appKey}/offers`;
 const getMyOffersUrl = `https://baas.kinvey.com/appdata/${appKey}/offers`;
 const getOfferDetailsUrl = `https://baas.kinvey.com/appdata/${appKey}/offers/`;
@@ -32,6 +33,7 @@ const createCategoryUrl = `https://baas.kinvey.com/appdata/${appKey}/categories`
 const deleteOfferUrl = `https://baas.kinvey.com/appdata/${appKey}/offers/`;
 const deleteAllOfferCommentsUrl = `https://baas.kinvey.com/appdata/${appKey}/comments`;
 const deleteCategoryUrl = `https://baas.kinvey.com/appdata/${appKey}/categories/`;
+const deleteCommentUrl = `https://baas.kinvey.com/appdata/${appKey}/comments/`;
 
 const editOfferUrl = `https://baas.kinvey.com/appdata/${appKey}/offers/`;
 const editMyProfileUrl = `https://baas.kinvey.com/user/${appKey}/`;
@@ -111,6 +113,15 @@ export class ReqHandlerService {
     )
   }
 
+  getAllOffersByCategory(category){
+    return this.http.get(
+      getAllOffersByCategoryUrl + `?query={"category":"${category}"}&sort={"_kmd.ect": -1}`,
+      {
+        headers: this.createAuthHeaders('Kinvey')
+      }
+    )
+  }
+
   getMyOffers(){
     return this.http.get(
       getMyOffersUrl + `?query={"author":"${localStorage.getItem(`username`)}"}&sort={"_kmd.ect": -1}`,
@@ -165,6 +176,7 @@ export class ReqHandlerService {
     )
   }
 
+  //POST REQUESTS
   createOffer(offerModel: OfferModel): Observable<Object> {
     return this.http.post(
       createOfferUrl,
@@ -195,6 +207,7 @@ export class ReqHandlerService {
     )
   }
 
+  //DELETE REQUESTS
   deleteOffer(id){
     return this.http.delete(
       deleteOfferUrl + id,
@@ -222,6 +235,16 @@ export class ReqHandlerService {
     )
   }
 
+  deleteComment(id){
+    return this.http.delete(
+      deleteCommentUrl + id,
+      {
+        headers: this.createAuthHeaders('Kinvey')
+      }
+    )
+  }
+
+  // PUT REQUESTS
   editOffer(offerModel: OfferModel, id){
     return this.http.put(
       editOfferUrl + id,

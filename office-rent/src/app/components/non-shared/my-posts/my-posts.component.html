@@ -1,21 +1,23 @@
 <div id="preloader" *ngIf="loader">
   <div id="loader"></div>
 </div>
-<div *ngIf="!loader" class="container main-body col-lg-12">
+<div *ngIf="!loader" class="container main-body col-md-12">
   <h1>MY OFFERS</h1>
   <hr>
-  <div class="form-row">
-    <div *ngFor="let offer of offers | paginate: { itemsPerPage: 6, currentPage: p }" class="col-lg-6">
+  <div *ngIf="offers.length ==0"><h2 style="text-align: center">You have not published any offers yet.</h2></div>
+  <div *ngIf="offers.length !=0" class="form-row col-md-12">
+    <div *ngFor="let offer of offers | paginate: { itemsPerPage: 6, currentPage: p }" class="col-md-6">
       <div
-        class="media probootstrap-media d-flex align-items-stretch mb-4 probootstrap-animate fadeInUp probootstrap-animated">
-        <div class="probootstrap-media-image">
+        class="media probootstrap-media d-flex align-items-stretch mb-lg-4 probootstrap-animate fadeInUp probootstrap-animated" style="min-height: 355px">
+        <div >
           <img style="max-height: 250px; max-width: 250px;" src="{{offer.image}}"/>
         </div>
         <div class="media-body">
-          <span class="text-uppercase">Published on: <br/>{{calcTime(offer._kmd.lmt)}}</span>
-          <h4 class="mb-3">{{offer.title}}</h4>
-          <p>{{offer.address}}</p>
-          <p><a routerLink="/offers/{{offer._id}}">Read More</a></p>
+          <span class="text-navy">Published on: {{calcTime(offer._kmd.lmt)}}</span>
+          <h4 style="min-height: 78px" class="mb-4">{{offer.title}}</h4>
+          <p style="min-height: 48px">{{offer.address}}</p>
+          <p style="min-height: 48px">Category: <a routerLink="/" class="nav-item"> {{offer.category}}</a></p>
+          <p><button type="button" class="btn btn-info" routerLink="/offers/{{offer._id}}">Read More</button></p>
         </div>
       </div>
     </div>

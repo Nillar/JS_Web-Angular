@@ -1,6 +1,7 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewContainerRef} from '@angular/core';
 import {ReqHandlerService} from "../../../services/req-handler.service";
 import {Router} from "@angular/router";
+import {ToastsManager} from "ng2-toastr";
 
 @Component({
   selector: 'office-my-posts',
@@ -13,7 +14,11 @@ export class MyPostsComponent implements OnInit {
   public offersCount: number;
   public loader: boolean = true;
 
-  constructor(private router: Router, private reqHandlerService: ReqHandlerService) {
+  constructor(private router: Router,
+              private reqHandlerService: ReqHandlerService,
+              private toastr: ToastsManager,
+              private vcr: ViewContainerRef) {
+    this.toastr.setRootViewContainerRef(vcr);
   }
 
   ngOnInit() {
@@ -21,8 +26,12 @@ export class MyPostsComponent implements OnInit {
       this.offers = data;
       this.offersCount = this.offers.length;
       this.loader = false;
+      this.toastr.success('My Offers Loaded', 'Success');
     }, err => {
+      this.toastr.error('Loading unsuccessful', 'Error');
       console.log(err.message);
+      this.loader = false;
+      return;
     })
   }
 
@@ -56,7 +65,6 @@ export class MyPostsComponent implements OnInit {
         case 12:
           return 'December';
       }
-
 
     }
 

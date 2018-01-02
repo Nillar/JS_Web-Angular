@@ -44,10 +44,14 @@
             </div>
           </div>
         </div>
-       <h5 *ngIf="!isAuthor" class="card-header"><a [routerLink]="profileLink" class="nav-item">Click here for more offers by this user</a></h5>
+        <h5 *ngIf="!isAuthor" class="card-header"><a [routerLink]="profileLink" class="nav-item">Click here for more
+          offers by this user</a></h5>
       </div>
-      <button *ngIf="isAuthor || isAdmin" class="btn btn-dark" (click)="edit(offer?._id)" type="submit">Edit Offer</button>
-      <button *ngIf="isAuthor || isAdmin" class="btn btn-danger" (click)="delete(offer?._id)" type="submit">Delete Offer</button>
+      <button *ngIf="isAuthor || isAdmin" class="btn btn-dark" (click)="edit(offer?._id)" type="submit">Edit Offer
+      </button>
+      <button *ngIf="isAuthor || isAdmin" class="btn btn-danger" (click)="deleteOffer(offer?._id)" type="submit">Delete
+        Offer
+      </button>
       <hr>
       <!-- Comments Form -->
       <div class="card my-4">
@@ -70,8 +74,15 @@
         <img class="d-flex mr-3 rounded-circle" src="http://placehold.it/50x50" alt="">
         <div class="media-body">
           <h4 class="card-header" style="border-radius: 5px">{{offerComment?.content}}</h4>
-          <h6> commented on: {{calcTime(offerComment?._kmd.lmt)}} by <a routerLink="/" (click)="anotherUserAccountLink(offerComment?.author)" class="nav-item">{{offerComment?.author}}</a></h6>
+          <h6><a routerLink="/" style="float: left"
+                 *ngIf="offerComment?.author === username || isAdmin" class="nav-item"
+                 (click)="deleteComment(offerComment?._id)">Delete Comment |</a> &nbsp; commented on:
+            {{calcTime(offerComment?._kmd.lmt)}} by&nbsp;
+            <a routerLink="/" (click)="anotherUserAccountLink(offerComment?.author)" class="nav-item">|
+              {{offerComment?.author}}</a>
+          </h6>
           <br>
+          <!--<button *ngIf="offerComment?.author === username" type="submit">Delete</button>-->
 
         </div>
       </div>

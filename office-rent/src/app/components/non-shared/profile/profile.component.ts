@@ -1,9 +1,9 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewContainerRef} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {ReqHandlerService} from "../../../services/req-handler.service";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {DuplicateCheck} from "../auth/register/validate-email";
 import {EditProfileModel} from "../../../models/edit-profile.model";
+import {ToastsManager} from "ng2-toastr";
 
 const emailPattern = /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/;
 
@@ -30,15 +30,23 @@ export class ProfileComponent implements OnInit {
               private reqHandlerService: ReqHandlerService,
               private fb: FormBuilder,
               private route: ActivatedRoute,
-              private value: DuplicateCheck) {
+              private toastr: ToastsManager,
+              private vcr: ViewContainerRef) {
     this.model = new EditProfileModel('', '', '', '', '', '');
+    this.toastr.setRootViewContainerRef(vcr);
     this.username = this.route.snapshot.paramMap.get('username');
   }
+
 
   ngOnInit() {
     if (this.username === localStorage.getItem('username')) {
       this.isCurrentUser = true;
     }
+    this.editProfile = this.fb.group({
+      email: ['', [Validators.required, Validators.pattern(new RegExp(emailPattern))]],
+      personalInfo: ['', [Validators.maxLength(400)]]
+    })
+
 
     this.reqHandlerService.getUserDetails(this.username).subscribe(data => {
       this.currentUser = data[0];
@@ -51,24 +59,32 @@ export class ProfileComponent implements OnInit {
       this.model.username = data[0].username;
 
       this.editProfile = this.fb.group({
-        email: [data[0].email, [Validators.required, Validators.pattern(new RegExp(emailPattern)), this.checkMail.bind(this)]],
+        email: [data[0].email, [Validators.required, Validators.pattern(new RegExp(emailPattern))]],
         personalInfo: [data[0].personalInfo, [Validators.maxLength(400)]]
       });
 
-    });
+
+    },
+      err=>{
+        this.toastr.error('Loading unsuccessful', 'Error');
+        console.log(err.message);
+        window.location.reload();
+        return;
+      });
     this.reqHandlerService.getOffersByUsername(this.username).subscribe(data => {
       this.offers = data;
       this.offersCount = this.offers.length;
       this.loader = false;
+      this.toastr.success('Profile Loaded', 'Success');
     }, err => {
+      this.toastr.error('Loading unsuccessful', 'Error');
       console.log(err.message);
+      window.location.reload();
+      return;
     });
 
 
-    this.editProfile = this.fb.group({
-      email: ['', [Validators.required, Validators.pattern(new RegExp(emailPattern)), this.checkMail.bind(this)]],
-      personalInfo: ['', [Validators.maxLength(400)]]
-    })
+
   }
 
   editInfoClicked() {
@@ -83,8 +99,8 @@ export class ProfileComponent implements OnInit {
     this.model.email = this.editProfile.value['email'];
     this.model.personalInfo = this.editProfile.value['personalInfo'];
 
-    if(this.model.personalInfo.length > 400){
-      console.log('Personal Info must be maximum 400 symbols');
+    if (this.model.personalInfo.length > 400) {
+      this.toastr.error('Personal Info must be max 400 symbols', 'Error');
       return;
     }
     this.loader = true;
@@ -92,12 +108,13 @@ export class ProfileComponent implements OnInit {
     this.reqHandlerService.editMyProfile(this.model, this.userId).subscribe(data => {
       localStorage.setItem('authtoken', data['_kmd']['authtoken']);
       localStorage.setItem('email', data['email']);
+      this.toastr.success('Edit successful', 'Success');
 
       this.reqHandlerService.getUserDetails(this.username).subscribe(data2 => {
         this.currentUser = data2[0];
 
         this.editProfile = this.fb.group({
-          email: [data2[0].email, [Validators.required, Validators.pattern(new RegExp(emailPattern)), this.checkMail.bind(this)]],
+          email: [data2[0].email, [Validators.required, Validators.pattern(new RegExp(emailPattern))]],
           personalInfo: [data2[0].personalInfo, [Validators.maxLength(400)]]
         });
 
@@ -112,9 +129,6 @@ export class ProfileComponent implements OnInit {
     })
   }
 
-  checkMail(email) {
-    return this.value.validateMail(email.value) ? {duplicate: true} : null;
-  }
 
   calcTime(dateIsoFormat) {
     let date = new Date(dateIsoFormat);

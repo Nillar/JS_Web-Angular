@@ -50,8 +50,9 @@
 
         <select (change)="onChange($event.target.value)" class="form-control" name="category" id="select">
           <option value="category" class="option" disabled>choose a category</option>
-          <option value={{currentOffer?.category}} class="option" selected disabled>{{currentOffer?.category}}</option>
-          <option *ngFor="let category of categoriesArr" value={{category.category}}>{{category.category}}</option>
+
+          <option value={{currentOffer?.category}} class="option" selected disabled>{{currentOffer?.category}} - current</option>
+          <option *ngFor="let category of categoriesArr" value={{category}}>{{category}}</option>
         </select>
       </div>
       <div class="form-group col-md-6">

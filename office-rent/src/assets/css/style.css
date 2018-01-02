@@ -327,14 +327,17 @@ a {
   .probootstrap-media .probootstrap-media-image {
     background-size: cover;
     min-height: 250px!important;
-    width: 50%; }
+    width: 51%;
+    overflow: hidden;
+  }
     @media (max-width: 991px) {
       .probootstrap-media .probootstrap-media-image {
         width: 100%;
         height: 200px; } }
   .probootstrap-media .media-body {
 
-    padding: 1em; }
+    padding: 0.3em 0.5em 0.3em 1em;
+  }
 
 .probootstrap-form {
   margin-bottom: 0px;
@@ -655,5 +658,116 @@ h1, h3 {
     -webkit-transform: rotate(360deg);
     -ms-transform: rotate(360deg);
     transform: rotate(360deg);
+  }
+}
+
+.toaster {
+  position: fixed;
+  margin: 16px;
+  padding: 16px;
+  z-index: 100000;
+}
+
+.toaster div {
+  margin: 0;
+  padding: 0;
+}
+
+.toaster-location-bottom-right {
+  bottom: 0;
+  right: 0;
+}
+
+.toaster-location-top-right, .toaster-location-top-left {
+  top: 0;
+}
+
+.toaster-location-bottom-right, .toaster-location-bottom-left {
+  bottom: 0;
+}
+
+.toaster-location-bottom-right, .toaster-location-top-right {
+  right: 0;
+}
+
+.toaster-location-top-left, .toaster-location-bottom-left {
+  left: 0;
+}
+
+.error-template {padding: 40px 15px;text-align: center;}
+.error-actions {margin-top:15px;margin-bottom:15px;}
+.error-actions .btn { margin-right:10px; }
+
+/*==========  Mobile First Method  ==========*/
+
+/* Custom, iPhone Retina */
+@media only screen and (min-width : 320px) {
+  .toaster {
+    width: 100%;
+  }
+}
+
+/* Extra Small Devices, Phones */
+@media only screen and (min-width : 480px) {
+  .toaster {
+    width: 66%;
+  }
+}
+
+/* Small Devices, Tablets */
+@media only screen and (min-width : 768px) {
+  .toaster {
+    width: 33%;
+  }
+}
+
+/* Medium Devices, Desktops */
+@media only screen and (min-width : 992px) {
+  .toaster {
+    width: 25%;
+  }
+}
+
+/* Large Devices, Wide Screens */
+@media only screen and (min-width : 1200px) {
+  .toaster {
+    width: 15%;
+  }
+}
+
+/*==========  Non-Mobile First Method  ==========*/
+
+/* Large Devices, Wide Screens */
+@media only screen and (max-width : 1200px) {
+  .toaster {
+    width: 25%;
+  }
+}
+
+/* Medium Devices, Desktops */
+@media only screen and (max-width : 992px) {
+  .toaster {
+    width: 33%;
+  }
+}
+
+/* Small Devices, Tablets */
+@media only screen and (max-width : 768px) {
+  .toaster {
+    width: 66%;
+  }
+}
+
+/* Extra Small Devices, Phones */
+@media only screen and (max-width : 480px) {
+  .toaster {
+    width: 100%;
+  }
+}
+
+/* Custom, iPhone Retina */
+@media only screen and (max-width : 320px) {
+  .toaster {
+    width: 100%;
   }
 }

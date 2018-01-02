@@ -5,10 +5,10 @@ import {HttpClientModule} from "@angular/common/http";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {NgxPaginationModule} from 'ngx-pagination';
 import {CommonModule} from "@angular/common";
+import { ToastModule, ToastOptions } from 'ng2-toastr';
+import { CustomOption } from './custom-option';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
-// SERVICES
-import {ReqHandlerModule} from "./services/req-handler.module";
-import {DuplicateCheck} from "./components/non-shared/auth/register/validate-email";
 
 // COMPONENTS
 import {AppComponent} from './app.component';
@@ -24,6 +24,7 @@ import {LogoutComponent} from "./components/non-shared/auth/logout/logout.compon
 import {AuthGuard} from "./guards/auth.guard";
 import {AdminGuard} from "./guards/admin.guard";
 import {ReqHandlerService} from "./services/req-handler.service";
+import {ToasterService} from "angular2-toaster";
 
 
 @NgModule({
@@ -39,6 +40,8 @@ import {ReqHandlerService} from "./services/req-handler.service";
   ],
   imports: [
     BrowserModule,
+    BrowserAnimationsModule,
+    ToastModule.forRoot(),
     AppRoutingModule,
     FormsModule,
     ReactiveFormsModule,
@@ -46,7 +49,7 @@ import {ReqHandlerService} from "./services/req-handler.service";
     HttpClientModule,
     CommonModule
   ],
-  providers: [AuthGuard, AdminGuard, ReqHandlerService, DuplicateCheck],
+  providers: [AuthGuard, AdminGuard, ReqHandlerService, ToasterService, {provide: ToastOptions, useClass: CustomOption}],
   bootstrap: [AppComponent]
 })
 export class AppModule {

@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit, ViewContainerRef} from '@angular/core';
 import {Router} from "@angular/router";
 import {ReqHandlerService} from "../../../services/req-handler.service";
+import {ToasterService} from "angular2-toaster";
+import {ToastsManager} from "ng2-toastr";
 
 @Component({
   selector: 'office-offers-list',
@@ -9,20 +11,66 @@ import {ReqHandlerService} from "../../../services/req-handler.service";
 })
 export class OffersListComponent implements OnInit {
   public offers: any;
+  public categoriesArr: any;
+  public category: string;
   public p: number = 1;
   public offersCount: number;
   public loader: boolean = true;
 
-  constructor(private router: Router, private reqHandlerService: ReqHandlerService) { }
+  constructor(private router: Router,
+              private reqHandlerService: ReqHandlerService,
+              private toastr: ToastsManager,
+              private vcr: ViewContainerRef) {
+    this.toastr.setRootViewContainerRef(vcr);
+  }
 
   ngOnInit() {
+    this.category = '';
     this.reqHandlerService.getAllOffers().subscribe(data=>{
       this.offers = data;
       this.offersCount = this.offers.length;
       this.loader = false;
+      this.toastr.success('Offers Loaded', 'Success');
     }, err=>{
+      this.toastr.error('Loading unsuccessful', 'Error');
+      this.loader = false;
       console.log(err.message);
+      this.router.navigate(['/**']);
+      return;
+    });
+    this.reqHandlerService.getAllCategories().subscribe(data=>{
+      this.categoriesArr = data;
     })
+  }
+
+  onChange(category) {
+    this.loader = true;
+    this.offers = [];
+    this.category = category;
+    this.offersCount = 0;
+    if(this.category !== 'All Categories'){
+      this.reqHandlerService.getAllOffersByCategory(category).subscribe(data=>{
+        this.offers = data;
+        this.offersCount = this.offers.length;
+        this.loader = false;
+      }, err=>{
+        this.loader = false;
+        this.toastr.error('Loading unsuccessful', 'Error');
+        return;
+      });
+    }
+    if(this.category === 'All Categories'){
+      this.reqHandlerService.getAllOffers().subscribe(data=>{
+        this.offers = data;
+        this.offersCount = this.offers.length;
+        this.loader = false;
+      }, err=>{
+        this.loader = false;
+        this.toastr.error('Loading unsuccessful', 'Error');
+        return;
+      });
+    }
+
   }
 
 

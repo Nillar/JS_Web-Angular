@@ -1,16 +1,18 @@
 <div id="preloader" *ngIf="loader">
   <div id="loader"></div>
 </div>
-<div *ngIf="!loader" class="container">
+<div *ngIf="!loader" class="container main-body">
+
   <h2 *ngIf="isCurrentUser" style="margin-top: 20px">MY PROFILE PAGE</h2>
-  <h2 *ngIf="!isCurrentUser" style="margin-top: 20px">USER PROFILE PAGE - {{currentUser?.firstName}} {{currentUser?.lastName}}</h2>
+  <h2 *ngIf="!isCurrentUser" style="margin-top: 20px">USER PROFILE PAGE - {{currentUser?.firstName}}
+    {{currentUser?.lastName}}</h2>
   <hr>
 
   <form *ngIf="editInfo" (ngSubmit)="submit(editProfile)" [formGroup]='editProfile'>
     <div class="form-row">
       <div class="form-group col-md-6">
         <label for="inputEmail4">Email</label>
-        <input formControlName="email" type="email" class="form-control" id="inputEmail4"  value={{currentUser?.email}}>
+        <input formControlName="email" type="email" class="form-control" id="inputEmail4" value={{currentUser?.email}}>
         <div *ngIf="editProfile.get('email').errors && editProfile.get('email').touched" class="alert alert-danger">
           Email is required
         </div>
@@ -21,7 +23,7 @@
       <div class="form-group col-md-6">
         <label for="inputDescription2">Personal Info</label>
         <textarea style="resize: none; height: 100px" formControlName="personalInfo" type="text" class="form-control"
-                  id="inputDescription2"  value={{currentUser?.personalInfo}}></textarea>
+                  id="inputDescription2" value={{currentUser?.personalInfo}}></textarea>
         <div *ngIf="editProfile.get('personalInfo').errors && editProfile.get('personalInfo').touched"
              class="alert alert-danger">Personal Info must be between 15 and 400 symbols
         </div>
@@ -32,7 +34,8 @@
     <div class="form-row">
       <div class="form-group col-md-6">
         <label for="inputEmail1">Email</label>
-        <input disabled formControlName="email" type="text" class="form-control" id="inputEmail1" value={{currentUser?.email}}>
+        <input disabled formControlName="email" type="text" class="form-control" id="inputEmail1"
+               value={{currentUser?.email}}>
         <div *ngIf="editProfile.get('email').errors && editProfile.get('email').touched" class="alert alert-danger">
           Email is required
         </div>
@@ -42,7 +45,8 @@
     <div class="form-row">
       <div class="form-group col-md-6">
         <label for="inputDescription">Personal Info</label>
-        <textarea disabled style="resize: none; height: 100px" formControlName="personalInfo" type="text" class="form-control"
+        <textarea disabled style="resize: none; height: 100px" formControlName="personalInfo" type="text"
+                  class="form-control"
                   id="inputDescription" value={{currentUser?.personalInfo}}></textarea>
         <div *ngIf="editProfile.get('personalInfo').errors && editProfile.get('personalInfo').touched"
              class="alert alert-danger">Personal Info must be between 15 and 400 symbols
@@ -55,33 +59,36 @@
       Edit Info
     </button>
 
-    <button type="submit" *ngIf="isCurrentUser" (click)="saveInfoClicked()" [disabled]="editProfile.invalid || !editInfo" class="btn btn-primary">Save
+    <button type="submit" *ngIf="isCurrentUser" (click)="saveInfoClicked()"
+            [disabled]="editProfile.invalid || !editInfo" class="btn btn-primary">Save
       Info
     </button>
   </div>
-</div>
 
-<div class="container col-lg-12">
-  <h3>Published Offers</h3>
-  <hr>
-  <div class="form-row">
-    <div *ngFor="let offer of offers | paginate: { itemsPerPage: 2, currentPage: p }" class="col-lg-6">
-      <div
-        class="media probootstrap-media d-flex align-items-stretch mb-4 probootstrap-animate fadeInUp probootstrap-animated">
-        <div class="probootstrap-media-image">
-          <img style="max-height: 250px; max-width: 250px;" src="{{offer.image}}"/>
-        </div>
 
-        <div class="media-body">
-          <span class="text-uppercase">Published on: <br/>{{calcTime(offer._kmd.lmt)}}</span>
-          <h4 class="mb-3">{{offer.title}}</h4>
-          <p>{{offer.address}}</p>
-          <p><a routerLink="/offers/{{offer._id}}">Read More</a></p>
+  <div *ngIf="!loader" class="container col-lg-12">
+    <h3>Published Offers</h3>
+    <hr>
+    <div *ngIf="offers.length ==0"><h2 style="text-align: center">You have not published any offers yet.</h2></div>
+    <div *ngIf="offers.length !=0" class="form-row">
+      <div *ngFor="let offer of offers | paginate: { itemsPerPage: 2, currentPage: p }" class="col-lg-6">
+        <div
+          class="media probootstrap-media d-flex align-items-stretch mb-4 probootstrap-animate fadeInUp probootstrap-animated">
+          <div class="probootstrap-media-image">
+            <img style="max-height: 250px; max-width: 250px;" src="{{offer.image}}"/>
+          </div>
+
+          <div class="media-body">
+            <span class="text-uppercase">Published on: <br/>{{calcTime(offer._kmd.lmt)}}</span>
+            <h4 class="mb-3">{{offer.title}}</h4>
+            <p>{{offer.address}}</p>
+            <p><a routerLink="/offers/{{offer._id}}">Read More</a></p>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-  <div *ngIf="offersCount>2" class="pagination">
-    <pagination-controls (pageChange)="p = $event"></pagination-controls>
+    <div *ngIf="offersCount>2" class="pagination">
+      <pagination-controls (pageChange)="p = $event"></pagination-controls>
+    </div>
   </div>
 </div>
