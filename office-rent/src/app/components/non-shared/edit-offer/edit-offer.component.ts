@@ -18,30 +18,32 @@ export class EditOfferComponent implements OnInit {
   public currentOffer: Object;
   public offerId: string;
   public sellerEmail: string;
+  public loader: boolean = true;
 
   constructor(private fb: FormBuilder,
               private reqHandlerServer: ReqHandlerService,
               private router: Router,
               private route: ActivatedRoute) {
-    this.model = new OfferModel('','', '', '','', '', 0, 0, '', '')
+    this.model = new OfferModel('', '', '', '', '', '', 0, 0, '', '')
   }
 
   ngOnInit() {
+
     this.sellerEmail = localStorage.getItem('email');
     this.offerId = this.route.snapshot.paramMap.get('id');
-    this.reqHandlerServer.getOfferDetails(this.offerId).subscribe(data=>{
+    this.reqHandlerServer.getOfferDetails(this.offerId).subscribe(data => {
       this.currentOffer = data;
-
+      this.loader = false;
       this.model.author = localStorage.getItem('username');
       this.category = data['category'];
       this.model.sellerName = localStorage.getItem('firstName') + ' ' + localStorage.getItem('lastName');
       // this.model.sellerEmail = localStorage.getItem('email');
 
       this.edit = this.fb.group({
-        title: [data['title'],[Validators.required, Validators.minLength(4), Validators.maxLength(30)]],
+        title: [data['title'], [Validators.required, Validators.minLength(4), Validators.maxLength(30)]],
         image: [data['image']],
-        address: [data['address'],[Validators.required, Validators.minLength(5), Validators.maxLength(40)]],
-        description: [data['description'],[Validators.required, Validators.minLength(15), Validators.maxLength(400)]],
+        address: [data['address'], [Validators.required, Validators.minLength(5), Validators.maxLength(40)]],
+        description: [data['description'], [Validators.required, Validators.minLength(15), Validators.maxLength(400)]],
         price: [data['price'], [Validators.required, Validators.min(1), Validators.max(99999)]],
         area: [data['area'], [Validators.required, Validators.min(15), Validators.max(50000)]],
         sellerPhone: [data['sellerPhone'], [Validators.required, Validators.minLength(6), Validators.maxLength(20)]]
@@ -49,16 +51,16 @@ export class EditOfferComponent implements OnInit {
     });
 
     this.edit = this.fb.group({
-      title: ['',[Validators.required, Validators.minLength(4), Validators.maxLength(30)]],
+      title: ['', [Validators.required, Validators.minLength(4), Validators.maxLength(30)]],
       image: ['',],
-      address: ['',[Validators.required, Validators.minLength(5), Validators.maxLength(40)]],
-      description: ['',[Validators.required, Validators.minLength(15), Validators.maxLength(400)]],
+      address: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(40)]],
+      description: ['', [Validators.required, Validators.minLength(15), Validators.maxLength(400)]],
       price: ['', [Validators.required, Validators.min(1), Validators.max(99999)]],
       area: ['', [Validators.required, Validators.min(15), Validators.max(50000)]],
       sellerPhone: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(20)]]
     });
 
-    this.reqHandlerServer.getAllCategories().subscribe(data=>{
+    this.reqHandlerServer.getAllCategories().subscribe(data => {
       this.categoriesArr = data;
     })
   }
@@ -69,14 +71,15 @@ export class EditOfferComponent implements OnInit {
 
   submit(): void {
 
-    if(this.edit.value['image'] === '' || !this.edit.value['image'].startsWith('http')){
+    if (this.edit.value['image'] === '' || !this.edit.value['image'].startsWith('http')) {
       this.model.image = 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/480px-No_image_available.svg.png';
     }
 
-    if(this.edit.value['image'].startsWith('http')){
+    if (this.edit.value['image'].startsWith('http')) {
       this.model.image = this.edit.value['image'];
 
     }
+
     this.model.author = localStorage.getItem('username');
     this.model.title = this.edit.value['title'];
     this.model.address = this.edit.value['address'];
@@ -88,45 +91,48 @@ export class EditOfferComponent implements OnInit {
     // this.model.sellerEmail = localStorage.getItem('email');
     this.model.sellerPhone = this.edit.value['sellerPhone'];
 
-    if(this.model.title.length < 4 || this.model.title.length > 30){
+    this.loader = true;
+
+
+    if (this.model.title.length < 4 || this.model.title.length > 30) {
       console.log('Title must be between 4 and 30 symbols');
       this.formErrors = true;
       return;
     }
-    if(this.model.address.length < 5 || this.model.address.length > 40){
+    if (this.model.address.length < 5 || this.model.address.length > 40) {
       console.log('Address must be between 5 and 40 symbols');
       this.formErrors = true;
       return;
     }
 
-    if(this.model.description.length < 15 || this.model.description.length > 400){
+    if (this.model.description.length < 15 || this.model.description.length > 400) {
       console.log('Descrition must be between 15 and 400 symbols');
       this.formErrors = true;
       return;
     }
 
-    if(!Number.isInteger(this.model.price)){
+    if (!Number.isInteger(this.model.price)) {
       console.log('Price must be a number');
       this.formErrors = true;
       return;
     }
 
-    if(!Number.isInteger(this.model.area)){
+    if (!Number.isInteger(this.model.area)) {
       console.log('Area must be a number');
       this.formErrors = true;
       return;
     }
 
 
-    this.categoriesArr.map(data=>{
-      if(data.category.indexOf(this.category) !== -1){
+    this.categoriesArr.map(data => {
+      if (data.category.indexOf(this.category) !== -1) {
         this.formErrors = false;
         return;
       }
 
     });
 
-    if(this.model.sellerPhone.length < 6 || this.model.sellerPhone.length > 20){
+    if (this.model.sellerPhone.length < 6 || this.model.sellerPhone.length > 20) {
       console.log('Phone must be between 6 and 20 symbols');
       this.formErrors = true;
       return;
@@ -134,10 +140,13 @@ export class EditOfferComponent implements OnInit {
 
     this.formErrors = false;
 
-    if(!this.formErrors){
-      this.reqHandlerServer.editOffer(this.model, this.offerId).subscribe(data =>{
+
+
+    if (!this.formErrors) {
+      this.reqHandlerServer.editOffer(this.model, this.offerId).subscribe(data => {
+        this.loader = false;
         this.router.navigate([`/offers/${this.offerId}`])
-      }, err =>{
+      }, err => {
         console.log(err.message)
       })
     }

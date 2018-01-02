@@ -15,6 +15,7 @@ export class LoginComponent implements OnInit{
   public model : LoginModel;
   public loginFail : boolean;
   public username : string;
+  public loader: boolean = true;
 
   constructor(
     private reqHandlerService : ReqHandlerService,
@@ -26,9 +27,10 @@ export class LoginComponent implements OnInit{
   }
 
   ngOnInit() {
+    this.loader = false;
     // FORM GROUP REGISTER
     this.login = this.fb.group({
-      username: ['', [Validators.required, Validators.minLength(4), Validators.maxLength(12)]],
+      username: ['', [Validators.required, Validators.minLength(4), Validators.maxLength(15)]],
       password: ['', [Validators.required, Validators.minLength(4), Validators.maxLength(25)]],
     })
   }
@@ -37,10 +39,23 @@ export class LoginComponent implements OnInit{
     this.model.username = this.login.value['username'];
     this.model.password = this.login.value['password'];
 
+    if(this.model.username.length < 4 || this.model.username.length > 15){
+      console.log('Username must be between 4 and 15 symbols');
+      return;
+    }
+
+    if(this.model.password.length < 4 || this.model.password.length > 25){
+      console.log('Password must be between 4 and 25 symbols');
+      return;
+    }
+    this.loader = true;
+
     this.reqHandlerService.login(this.model)
       .subscribe(
         data => {
           this.successfulLogin(data);
+          this.loader = false;
+
         },
         err => {
           this.loginFail = true;
@@ -54,6 +69,7 @@ export class LoginComponent implements OnInit{
 
   successfulLogin(data) : void {
     this.reqHandlerService.authtoken = data['_kmd']['authtoken'];
+
     localStorage.setItem('authtoken', data['_kmd']['authtoken']);
     localStorage.setItem('username', data['username']);
     localStorage.setItem('firstName', data['firstName']);

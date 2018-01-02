@@ -1,4 +1,7 @@
-<div class="container main-body">
+<div id="preloader" *ngIf="loader">
+  <div id="loader"></div>
+</div>
+<div *ngIf="!loader" class="container main-body">
 
   <div class="row">
     <div class="col-lg-12">

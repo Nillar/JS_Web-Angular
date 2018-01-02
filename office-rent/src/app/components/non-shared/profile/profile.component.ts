@@ -24,6 +24,7 @@ export class ProfileComponent implements OnInit {
   public currentUser: Object;
   public isCurrentUser: boolean = false;
   public editInfo: boolean = false;
+  public loader: boolean = true;
 
   constructor(private router: Router,
               private reqHandlerService: ReqHandlerService,
@@ -54,11 +55,11 @@ export class ProfileComponent implements OnInit {
         personalInfo: [data[0].personalInfo, [Validators.maxLength(400)]]
       });
 
-
     });
     this.reqHandlerService.getOffersByUsername(this.username).subscribe(data => {
       this.offers = data;
       this.offersCount = this.offers.length;
+      this.loader = false;
     }, err => {
       console.log(err.message);
     });
@@ -82,6 +83,12 @@ export class ProfileComponent implements OnInit {
     this.model.email = this.editProfile.value['email'];
     this.model.personalInfo = this.editProfile.value['personalInfo'];
 
+    if(this.model.personalInfo.length > 400){
+      console.log('Personal Info must be maximum 400 symbols');
+      return;
+    }
+    this.loader = true;
+
     this.reqHandlerService.editMyProfile(this.model, this.userId).subscribe(data => {
       localStorage.setItem('authtoken', data['_kmd']['authtoken']);
       localStorage.setItem('email', data['email']);
@@ -99,6 +106,8 @@ export class ProfileComponent implements OnInit {
         this.model.firstName = data2[0].firstName;
         this.model.lastName = data2[0].lastName;
         this.model.role = data2[0].role;
+
+        this.loader = false;
       })
     })
   }

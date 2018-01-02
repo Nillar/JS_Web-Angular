@@ -1,6 +1,9 @@
-<div class="container">
+<div id="preloader" *ngIf="loader">
+  <div id="loader"></div>
+</div>
+<div *ngIf="!loader" class="container">
   <h2 *ngIf="isCurrentUser" style="margin-top: 20px">MY PROFILE PAGE</h2>
-  <h2 *ngIf="!isCurrentUser" style="margin-top: 20px">USER PROFILE PAGE</h2>
+  <h2 *ngIf="!isCurrentUser" style="margin-top: 20px">USER PROFILE PAGE - {{currentUser?.firstName}} {{currentUser?.lastName}}</h2>
   <hr>
 
   <form *ngIf="editInfo" (ngSubmit)="submit(editProfile)" [formGroup]='editProfile'>
@@ -58,17 +61,17 @@
   </div>
 </div>
 
-<div class="container">
-
+<div class="container col-lg-12">
   <h3>Published Offers</h3>
   <hr>
   <div class="form-row">
-    <div *ngFor="let offer of offers | paginate: { itemsPerPage: 2, currentPage: p }" class="col-md-6">
+    <div *ngFor="let offer of offers | paginate: { itemsPerPage: 2, currentPage: p }" class="col-lg-6">
       <div
         class="media probootstrap-media d-flex align-items-stretch mb-4 probootstrap-animate fadeInUp probootstrap-animated">
         <div class="probootstrap-media-image">
           <img style="max-height: 250px; max-width: 250px;" src="{{offer.image}}"/>
         </div>
+
         <div class="media-body">
           <span class="text-uppercase">Published on: <br/>{{calcTime(offer._kmd.lmt)}}</span>
           <h4 class="mb-3">{{offer.title}}</h4>

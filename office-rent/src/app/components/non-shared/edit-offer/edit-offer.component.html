@@ -1,4 +1,7 @@
-<div class="container main-body">
+<div id="preloader" *ngIf="loader">
+  <div id="loader"></div>
+</div>
+<div *ngIf="!loader" class="container main-body">
   <h1>EDIT THIS OFFER</h1>
   <hr>
   <form (ngSubmit)="submit(edit)" [formGroup]='edit'>

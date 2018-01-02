@@ -11,6 +11,7 @@ export class OffersListComponent implements OnInit {
   public offers: any;
   public p: number = 1;
   public offersCount: number;
+  public loader: boolean = true;
 
   constructor(private router: Router, private reqHandlerService: ReqHandlerService) { }
 
@@ -18,6 +19,7 @@ export class OffersListComponent implements OnInit {
     this.reqHandlerService.getAllOffers().subscribe(data=>{
       this.offers = data;
       this.offersCount = this.offers.length;
+      this.loader = false;
     }, err=>{
       console.log(err.message);
     })

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {ReqHandlerService} from "../../../services/req-handler.service";
 import {Router} from "@angular/router";
 
@@ -11,14 +11,17 @@ export class MyPostsComponent implements OnInit {
   public offers: any;
   public p: number = 1;
   public offersCount: number;
+  public loader: boolean = true;
 
-  constructor(private router: Router, private reqHandlerService: ReqHandlerService) { }
+  constructor(private router: Router, private reqHandlerService: ReqHandlerService) {
+  }
 
   ngOnInit() {
-    this.reqHandlerService.getMyOffers().subscribe(data=>{
+    this.reqHandlerService.getMyOffers().subscribe(data => {
       this.offers = data;
       this.offersCount = this.offers.length;
-    }, err=>{
+      this.loader = false;
+    }, err => {
       console.log(err.message);
     })
   }
@@ -56,7 +59,8 @@ export class MyPostsComponent implements OnInit {
 
 
     }
-    return `${date.getDate()} ${getMonth(date.getMonth()+1)} ${date.getFullYear()}`;
+
+    return `${date.getDate()} ${getMonth(date.getMonth() + 1)} ${date.getFullYear()}`;
   }
 
 }

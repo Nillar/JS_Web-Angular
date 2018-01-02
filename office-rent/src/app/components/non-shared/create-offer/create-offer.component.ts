@@ -15,6 +15,7 @@ export class CreateOfferComponent implements OnInit {
   public category: string;
   public categoriesArr: any;
   public formErrors: boolean = true;
+  public loader: boolean = true;
 
   constructor(private fb: FormBuilder,
               private reqHandlerServer: ReqHandlerService,
@@ -23,6 +24,7 @@ export class CreateOfferComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.loader = false;
     this.create = this.fb.group({
       title: ['',[Validators.required, Validators.minLength(4), Validators.maxLength(30)]],
       image: ['',],
@@ -109,9 +111,11 @@ export class CreateOfferComponent implements OnInit {
 
     this.formErrors = false;
 
+    this.loader = true;
     if(!this.formErrors){
       this.reqHandlerServer.createOffer(this.model).subscribe(data =>{
-        this.router.navigate(['/offers'])
+        this.router.navigate(['/offers']);
+        this.loader = false;
       }, err =>{
         console.log(err.message)
       })

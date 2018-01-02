@@ -20,6 +20,7 @@ export class OfferDetailsComponent implements OnInit {
   public isAuthor: boolean = false;
   public profileLink: string;
   public isAdmin: boolean = false;
+  public loader: boolean = true;
   // public anotherUserAccountLink: string;
 
   constructor(private router: Router, private route: ActivatedRoute, private reqHandlerService: ReqHandlerService, private fb: FormBuilder) {
@@ -33,7 +34,6 @@ export class OfferDetailsComponent implements OnInit {
       this.isAdmin = true;
     }
 
-    console.log(this.isAdmin);
     this.sellerEmail = localStorage.getItem('email');
     this.offerId = this.route.snapshot.paramMap.get('id');
     this.comment = this.fb.group({
@@ -48,9 +48,11 @@ export class OfferDetailsComponent implements OnInit {
         this.isAuthor = true;
       }
 
+
     });
     this.reqHandlerService.getOfferComments(this.offerId).subscribe(data=>{
       this.offerComments = data;
+      this.loader = false;
     })
   }
 
@@ -63,9 +65,17 @@ export class OfferDetailsComponent implements OnInit {
     this.model.author = this.username;
     this.model.postId = this.offerId;
 
+    if(this.model.content.length < 1 || this.model.content.length > 200){
+      console.log('Comment must be between 1 and 200 symbols');
+      return;
+    }
+
+    this.loader = true;
+
     this.reqHandlerService.createComment(this.model).subscribe(data =>{
       this.reqHandlerService.getOfferComments(this.offerId).subscribe(data=>{
         this.offerComments = data;
+        this.loader = false;
       });
       this.router.navigate([`/offers/${this.offerId}`]);
       this.comment.reset();
@@ -77,8 +87,10 @@ export class OfferDetailsComponent implements OnInit {
   }
 
   delete(id){
+    this.loader = true;
     this.reqHandlerService.deleteOffer(id).subscribe(data=>{
       this.reqHandlerService.deleteAllOfferComments(this.offerId).subscribe(data2 =>{
+        this.loader = false;
         this.router.navigate(['/offers']);
       })
     })
