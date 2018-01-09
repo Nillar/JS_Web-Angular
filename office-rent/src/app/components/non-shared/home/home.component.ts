@@ -1,9 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import {AbstractControl, FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {Form} from '@angular/forms/src/directives/form_interface'
-import {Router} from "@angular/router";
-import {ReqHandlerService} from "../../../services/req-handler.service";
-import {CategoryModel} from "../../../models/category.model";
 
 @Component({
   selector: 'office-home',
@@ -14,9 +9,7 @@ export class HomeComponent implements OnInit {
   public isLogged: boolean = false;
   public isAdmin: boolean = false;
 
-  constructor(private reqHandlerService: ReqHandlerService
-  ) {
-
+  constructor() {
   }
 
   ngOnInit() {

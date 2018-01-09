@@ -1,5 +1,4 @@
-export class CategoryModel{
-  constructor(
-    public category: string
-  ) {}
+export class CategoryModel {
+  constructor(public category: string) {
+  }
 }

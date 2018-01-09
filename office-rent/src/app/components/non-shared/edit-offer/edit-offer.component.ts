@@ -1,5 +1,5 @@
 import {Component, OnInit, ViewContainerRef} from '@angular/core';
-import {AbstractControl, FormBuilder, FormGroup, Validators, Form} from "@angular/forms";
+import { FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {OfferModel} from "../../../models/offer.model";
 import {ReqHandlerService} from "../../../services/req-handler.service";
 import {ActivatedRoute, Router} from "@angular/router";
@@ -51,6 +51,11 @@ export class EditOfferComponent implements OnInit {
         area: [data['area'], [Validators.required, Validators.min(15), Validators.max(50000)]],
         sellerPhone: [data['sellerPhone'], [Validators.required, Validators.minLength(6), Validators.maxLength(20)]]
       });
+    }, err=>{
+      this.toastr.error('No offer with this id');
+      this.router.navigate(['/offers']);
+      this.loader = false;
+      return;
     });
 
     this.edit = this.fb.group({
@@ -162,7 +167,10 @@ export class EditOfferComponent implements OnInit {
         this.loader = false;
         this.router.navigate([`/offers/${this.offerId}`])
       }, err => {
-        console.log(err.message)
+        this.loader = false;
+        this.toastr.error('Edit unsuccessful', 'Error');
+        console.log(err.message);
+        return;
       })
     }
   }

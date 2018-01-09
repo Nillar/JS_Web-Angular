@@ -6,7 +6,7 @@
   <hr>
   <div *ngIf="offers.length ==0"><h2 style="text-align: center">You have not published any offers yet.</h2></div>
   <div *ngIf="offers.length !=0" class="form-row col-md-12">
-    <div *ngFor="let offer of offers | paginate: { itemsPerPage: 6, currentPage: p }" class="col-md-6">
+    <div *ngFor="let offer of offers | paginate: { itemsPerPage: 4, currentPage: p }" class="col-md-6">
       <div
         class="media probootstrap-media d-flex align-items-stretch mb-lg-4 probootstrap-animate fadeInUp probootstrap-animated" style="min-height: 355px">
         <div >
@@ -22,7 +22,7 @@
       </div>
     </div>
   </div>
-  <div *ngIf="offersCount>6" class="pagination">
+  <div *ngIf="offersCount>4" class="pagination">
     <pagination-controls (pageChange)="p = $event"></pagination-controls>
   </div>
 </div>

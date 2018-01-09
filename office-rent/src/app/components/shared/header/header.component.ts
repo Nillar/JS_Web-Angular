@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {ReqHandlerService} from "../../../services/req-handler.service";
 import {Router} from "@angular/router";
 
@@ -12,15 +12,13 @@ export class HeaderComponent implements OnInit {
   public profileLinkVariable: string;
 
   constructor(private reqHandlerService: ReqHandlerService,
-              private router:Router) {
+              private router: Router) {
   }
 
   ngOnInit() {
-    if(localStorage.getItem('username') !== null){
+    if (localStorage.getItem('username') !== null) {
       this.username = localStorage.getItem('username');
     }
-
-
   }
 
   loggedIn() {
@@ -28,10 +26,9 @@ export class HeaderComponent implements OnInit {
     return !!localStorage.getItem('authtoken');
   }
 
-  profileLinkRedirect(){
-    this.reqHandlerService.getUserDetails(localStorage.getItem('username')).subscribe(data=>{
+  profileLinkRedirect() {
+    this.reqHandlerService.getUserDetails(localStorage.getItem('username')).subscribe(data => {
+      this.router.navigate([`/profile/${data[0]['username']}`]);
     });
-
-    this.router.navigate([`/profile/${localStorage.getItem('username')}`])
   }
 }

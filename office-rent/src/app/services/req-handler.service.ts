@@ -13,10 +13,12 @@ import {EditProfileModel} from "../models/edit-profile.model";
 const appKey = "kid_HJZ7bTJmz";// APP KEY HERE;
 const appSecret = "91d79a4cf2494db3b3d724d82388e701"; // APP SECRET HERE;
 
+// AUTH URLS
 const registerUrl = `https://baas.kinvey.com/user/${appKey}`;
 const loginUrl = `https://baas.kinvey.com/user/${appKey}/login`;
 const logoutUrl = `https://baas.kinvey.com/user/${appKey}/_logout`;
 
+// GET URLS
 const getAllOffersUrl = `https://baas.kinvey.com/appdata/${appKey}/offers?query={}&sort={"_kmd.ect": -1}`;
 const getAllOffersByCategoryUrl = `https://baas.kinvey.com/appdata/${appKey}/offers`;
 const getOffersByUsernameUrl = `https://baas.kinvey.com/appdata/${appKey}/offers`;
@@ -26,15 +28,18 @@ const getOfferCommentsUrl = `https://baas.kinvey.com/appdata/${appKey}/comments`
 const getAllCategoriesUrl = `https://baas.kinvey.com/appdata/${appKey}/categories`;
 const getUserDetailsUrl = `https://baas.kinvey.com/user/${appKey}`;
 
+// POST URLS
 const createOfferUrl = `https://baas.kinvey.com/appdata/${appKey}/offers`;
 const createCommentUrl = `https://baas.kinvey.com/appdata/${appKey}/comments`;
 const createCategoryUrl = `https://baas.kinvey.com/appdata/${appKey}/categories`;
 
+// DELETE URLS
 const deleteOfferUrl = `https://baas.kinvey.com/appdata/${appKey}/offers/`;
 const deleteAllOfferCommentsUrl = `https://baas.kinvey.com/appdata/${appKey}/comments`;
 const deleteCategoryUrl = `https://baas.kinvey.com/appdata/${appKey}/categories/`;
 const deleteCommentUrl = `https://baas.kinvey.com/appdata/${appKey}/comments/`;
 
+// PUT URLS
 const editOfferUrl = `https://baas.kinvey.com/appdata/${appKey}/offers/`;
 const editMyProfileUrl = `https://baas.kinvey.com/user/${appKey}/`;
 

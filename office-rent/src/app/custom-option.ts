@@ -6,4 +6,5 @@ export class CustomOption extends ToastOptions {
   newestOnTop = true;
   showCloseButton = true;
   dismiss = 'auto';
+  maxShown: 1;
 }

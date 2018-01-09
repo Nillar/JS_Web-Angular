@@ -1,15 +1,13 @@
 import {Component, OnInit, ViewContainerRef} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-
 import {Router} from "@angular/router";
-
-import {RegisterModel} from "../../../../models/register.model";
-import {ReqHandlerService} from "../../../../services/req-handler.service";
-
-import {PasswordValidation} from "./validate-pass";
-import {LoginModel} from "../../../../models/login.model";
 import {ToastsManager} from "ng2-toastr";
 
+import {RegisterModel} from "../../../../models/register.model";
+import {LoginModel} from "../../../../models/login.model";
+
+import {ReqHandlerService} from "../../../../services/req-handler.service";
+import {PasswordValidation} from "./validate-pass";
 
 const emailPattern = /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/;
 
@@ -35,7 +33,6 @@ export class RegisterComponent implements OnInit {
   }
 
   ngOnInit() {
-    // FORM GROUP REGISTER
     this.register = this.fb.group({
       email: ['', [Validators.required, Validators.pattern(new RegExp(emailPattern))]],
       username: ['', [Validators.required, Validators.minLength(4), Validators.maxLength(15)]],
@@ -51,8 +48,6 @@ export class RegisterComponent implements OnInit {
     this.loader = false;
   }
 
-
-  // SUBMIT REGISTER MODEL
   submit(): void {
 
     this.model.username = this.register.value['username'];
@@ -108,17 +103,16 @@ export class RegisterComponent implements OnInit {
       },
       err => {
         console.log(err);
-        if(err.status === 409){
+        if (err.status === 409) {
           this.toastr.error('User already exists', 'Error');
         }
-        else if(err.status !== 409){
+        else if (err.status !== 409) {
           this.toastr.error('Register unsuccessful', 'Error');
         }
         this.loader = false;
         return;
       })
   }
-
 
   successfulRegister(): void {
     this.reqHandlerService.login(this.loginModel).subscribe(data => {
@@ -131,8 +125,11 @@ export class RegisterComponent implements OnInit {
       localStorage.setItem('email', data['email']);
       localStorage.setItem('role', data['role']);
       this.router.navigate(['/']);
+    }, err => {
+      this.toastr.error('Login unsuccessful', 'Error');
+      this.loader = false;
+      this.router.navigate(['/login']);
+      return;
     });
-
   }
-
 }

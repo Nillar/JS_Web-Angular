@@ -23,6 +23,8 @@ import {LogoutComponent} from "./components/non-shared/auth/logout/logout.compon
 // GUARDS
 import {AuthGuard} from "./guards/auth.guard";
 import {AdminGuard} from "./guards/admin.guard";
+
+// SERVICES
 import {ReqHandlerService} from "./services/req-handler.service";
 import {ToasterService} from "angular2-toaster";
 

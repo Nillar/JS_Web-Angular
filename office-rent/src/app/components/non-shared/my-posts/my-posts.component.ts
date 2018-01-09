@@ -1,6 +1,6 @@
 import {Component, OnInit, ViewContainerRef} from '@angular/core';
-import {ReqHandlerService} from "../../../services/req-handler.service";
 import {Router} from "@angular/router";
+import {ReqHandlerService} from "../../../services/req-handler.service";
 import {ToastsManager} from "ng2-toastr";
 
 @Component({

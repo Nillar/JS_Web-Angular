@@ -17,7 +17,8 @@ export class AdminPanelComponent implements OnInit {
   public p: number = 1;
   public categoriesCount: number;
   public categoryExists: boolean = false;
-  public loader:boolean = true;
+  public formErrors: boolean = true;
+  public loader: boolean = true;
 
   constructor(private reqHandlerService: ReqHandlerService,
               private fb: FormBuilder,
@@ -43,7 +44,8 @@ export class AdminPanelComponent implements OnInit {
 
     this.createCategory = this.fb.group({
       category: ['', [Validators.minLength(3), Validators.maxLength(25)]]
-    })
+    });
+
   }
 
   delete(id) {
@@ -53,6 +55,10 @@ export class AdminPanelComponent implements OnInit {
         this.categoriesArr.reverse();
         this.categoriesCount = this.categoriesArr.length;
         this.toastr.warning('Category Deleted');
+        this.createCategory = this.fb.group({
+          category: ['', [Validators.minLength(3), Validators.maxLength(25)]]
+        });
+        this.model.category = this.createCategory.value['category'];
 
       }, err => {
         this.toastr.error('Delete unsuccessful', 'Error');
@@ -67,6 +73,7 @@ export class AdminPanelComponent implements OnInit {
   submit() {
     if (this.createCategory.value['category'].length < 3 || this.createCategory.value['category'].length > 25) {
       this.toastr.error('Category must be between 3 and 25 symbols');
+      this.formErrors = true;
       return;
     }
     this.model.category = this.createCategory.value['category'];
@@ -76,7 +83,7 @@ export class AdminPanelComponent implements OnInit {
       if (data.category.includes(this.model.category)) {
         this.categoryExists = true;
         this.createCategory.reset();
-
+        this.formErrors = true;
         return;
       }
     });
@@ -84,23 +91,37 @@ export class AdminPanelComponent implements OnInit {
     if (this.categoryExists) {
       this.toastr.error('Category already exists');
       this.categoryExists = false;
+      this.formErrors = true;
       this.createCategory.reset();
       return;
     }
 
+    this.formErrors = false;
 
     this.reqHandlerService.createCategory(this.model).subscribe(data => {
       this.categoryExists = false;
+
       this.reqHandlerService.getAllCategories().subscribe(data2 => {
+        this.createCategory = this.fb.group({
+          category: ['', [Validators.minLength(3), Validators.maxLength(25)]]
+        });
+        this.model.category = this.createCategory.value['category'];
         this.categoriesArr = data2;
         this.categoriesArr.reverse();
         this.categoriesCount = this.categoriesArr.length;
         this.toastr.info('Category created');
-
+      }, err2 => {
+        this.toastr.error('Loading unsuccessful', 'Error');
+        this.router.navigate(['/**']);
+        return;
       });
       this.router.navigate(['/admin']);
       this.createCategory.reset();
-    })
+    },err=>{
+      this.toastr.error('Create unsuccessful', 'Error');
+      this.router.navigate(['/**']);
+      return;
+    });
   }
 
 }

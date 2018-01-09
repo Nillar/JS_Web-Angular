@@ -1,4 +1,4 @@
-import {Component, NgModule, OnInit, ViewContainerRef} from '@angular/core';
+import {Component, OnInit, ViewContainerRef} from '@angular/core';
 import {LoginModel} from "../../../../models/login.model";
 import {ReqHandlerService} from "../../../../services/req-handler.service";
 import {Router} from '@angular/router';
@@ -15,8 +15,6 @@ export class LoginComponent implements OnInit {
   public model: LoginModel;
   public username: string;
   public loader: boolean = true;
-  public success: boolean = false;
-  public error: boolean = true;
 
   constructor(private reqHandlerService: ReqHandlerService,
               private router: Router,
@@ -30,7 +28,6 @@ export class LoginComponent implements OnInit {
 
   ngOnInit() {
     this.loader = false;
-    // FORM GROUP REGISTER
     this.login = this.fb.group({
       username: ['', [Validators.required, Validators.minLength(4), Validators.maxLength(15)]],
       password: ['', [Validators.required, Validators.minLength(4), Validators.maxLength(25)]],

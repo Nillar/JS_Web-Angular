@@ -1,5 +1,5 @@
 import {Component, OnInit, ViewContainerRef} from '@angular/core';
-import {AbstractControl, FormBuilder, FormGroup, Validators, Form} from "@angular/forms";
+import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {OfferModel} from "../../../models/offer.model";
 import {ReqHandlerService} from "../../../services/req-handler.service";
 import {Router} from "@angular/router";
@@ -44,6 +44,10 @@ export class CreateOfferComponent implements OnInit {
       for (let obj in data) {
         this.categoriesArr.push(data[obj]['category'])
       }
+    }, err=>{
+      this.toastr.error('Could not load categories');
+      this.router.navigate(['/']);
+      return;
     })
   }
 
@@ -69,7 +73,6 @@ export class CreateOfferComponent implements OnInit {
     this.model.price = this.create.value['price'];
     this.model.area = this.create.value['area'];
     this.model.sellerName = localStorage.getItem('firstName') + ' ' + localStorage.getItem('lastName');
-    // this.model.sellerEmail = localStorage.getItem('email');
     this.model.sellerPhone = this.create.value['sellerPhone'];
 
     if (this.model.title.length < 4 || this.model.title.length > 30) {
@@ -137,7 +140,10 @@ export class CreateOfferComponent implements OnInit {
         this.router.navigate(['/offers']);
         this.loader = false;
       }, err =>{
-        console.log(err.message)
+        this.toastr.warning('Publish unsuccessful');
+        console.log(err.message);
+        this.loader = false;
+        return;
       })
     }
   }

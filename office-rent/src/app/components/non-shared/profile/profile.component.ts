@@ -7,7 +7,6 @@ import {ToastsManager} from "ng2-toastr";
 
 const emailPattern = /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/;
 
-
 @Component({
   selector: 'office-profile',
   templateUrl: './profile.component.html',
@@ -34,19 +33,19 @@ export class ProfileComponent implements OnInit {
               private vcr: ViewContainerRef) {
     this.model = new EditProfileModel('', '', '', '', '', '');
     this.toastr.setRootViewContainerRef(vcr);
-    this.username = this.route.snapshot.paramMap.get('username');
   }
 
-
   ngOnInit() {
+    this.username= this.route.snapshot.paramMap.get('username');
+
     if (this.username === localStorage.getItem('username')) {
       this.isCurrentUser = true;
     }
+
     this.editProfile = this.fb.group({
       email: ['', [Validators.required, Validators.pattern(new RegExp(emailPattern))]],
       personalInfo: ['', [Validators.maxLength(400)]]
-    })
-
+    });
 
     this.reqHandlerService.getUserDetails(this.username).subscribe(data => {
       this.currentUser = data[0];
@@ -62,13 +61,11 @@ export class ProfileComponent implements OnInit {
         email: [data[0].email, [Validators.required, Validators.pattern(new RegExp(emailPattern))]],
         personalInfo: [data[0].personalInfo, [Validators.maxLength(400)]]
       });
-
-
     },
       err=>{
         this.toastr.error('Loading unsuccessful', 'Error');
+        this.loader = false;
         console.log(err.message);
-        window.location.reload();
         return;
       });
     this.reqHandlerService.getOffersByUsername(this.username).subscribe(data => {
@@ -79,12 +76,9 @@ export class ProfileComponent implements OnInit {
     }, err => {
       this.toastr.error('Loading unsuccessful', 'Error');
       console.log(err.message);
-      window.location.reload();
+      this.loader = false;
       return;
     });
-
-
-
   }
 
   editInfoClicked() {
@@ -125,7 +119,17 @@ export class ProfileComponent implements OnInit {
         this.model.role = data2[0].role;
 
         this.loader = false;
+      },err2=>{
+        this.toastr.error('Loading unsuccessful', 'Error');
+        console.log(err2.message);
+        this.loader = false;
+        return;
       })
+    }, err=>{
+      this.toastr.error('Editing unsuccessful', 'Error');
+      console.log(err.message);
+      this.loader = false;
+      return;
     })
   }
 

@@ -16,6 +16,10 @@ export class LogoutComponent implements OnInit {
       .subscribe(data => {
         localStorage.clear();
         this.router.navigate(['/login']);
+      }, err=>{
+        localStorage.clear();
+        this.router.navigate(['/login']);
+        return;
       })
   }
 }

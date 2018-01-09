@@ -1,7 +1,6 @@
 import {Component, OnInit, ViewContainerRef} from '@angular/core';
 import {Router} from "@angular/router";
 import {ReqHandlerService} from "../../../services/req-handler.service";
-import {ToasterService} from "angular2-toaster";
 import {ToastsManager} from "ng2-toastr";
 
 @Component({
@@ -26,6 +25,14 @@ export class OffersListComponent implements OnInit {
 
   ngOnInit() {
     this.category = '';
+    this.reqHandlerService.getAllCategories().subscribe(data=>{
+      this.categoriesArr = data;
+      // this.loader = false;
+    }, err=>{
+      this.toastr.error('Could not load categories');
+      this.loader = false;
+      return;
+    });
     this.reqHandlerService.getAllOffers().subscribe(data=>{
       this.offers = data;
       this.offersCount = this.offers.length;
@@ -38,9 +45,8 @@ export class OffersListComponent implements OnInit {
       this.router.navigate(['/**']);
       return;
     });
-    this.reqHandlerService.getAllCategories().subscribe(data=>{
-      this.categoriesArr = data;
-    })
+
+
   }
 
   onChange(category) {
@@ -57,6 +63,7 @@ export class OffersListComponent implements OnInit {
         this.loader = false;
         this.toastr.error('Loading unsuccessful', 'Error');
         return;
+
       });
     }
     if(this.category === 'All Categories'){
@@ -70,9 +77,7 @@ export class OffersListComponent implements OnInit {
         return;
       });
     }
-
   }
-
 
   calcTime(dateIsoFormat) {
     let date = new Date(dateIsoFormat);

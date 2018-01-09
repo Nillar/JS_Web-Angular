@@ -23,8 +23,6 @@ export class OfferDetailsComponent implements OnInit {
   public isAdmin: boolean = false;
   public loader: boolean = true;
 
-  // public anotherUserAccountLink: string;
-
   constructor(private router: Router,
               private route: ActivatedRoute,
               private reqHandlerService: ReqHandlerService,
@@ -59,14 +57,19 @@ export class OfferDetailsComponent implements OnInit {
     }, err => {
       this.toastr.error('Loading unsuccessful', 'Error');
       console.log(err.message);
-      this.router.navigate(['/**'])
+      this.loader = false;
+      this.router.navigate(['/**']);
       return;
 
     });
     this.reqHandlerService.getOfferComments(this.offerId).subscribe(data => {
       this.offerComments = data;
       this.loader = false;
-    })
+    },err=>{
+      this.loader = false;
+      this.toastr.info('Could not load comments');
+      return;
+    });
   }
 
   anotherUserAccountLink(username) {
