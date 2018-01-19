@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {ReqHandlerService} from "../../../services/req-handler.service";
 import {Router} from "@angular/router";
+import {ProfileComponent} from "../../non-shared/profile/profile.component";
 
 @Component({
   selector: 'office-header',
@@ -29,6 +30,7 @@ export class HeaderComponent implements OnInit {
   profileLinkRedirect() {
     this.reqHandlerService.getUserDetails(localStorage.getItem('username')).subscribe(data => {
       this.router.navigate([`/profile/${data[0]['username']}`]);
+        window.location.reload();
     });
   }
 }

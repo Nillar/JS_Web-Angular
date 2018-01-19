@@ -33,10 +33,10 @@ export class ProfileComponent implements OnInit {
               private vcr: ViewContainerRef) {
     this.model = new EditProfileModel('', '', '', '', '', '');
     this.toastr.setRootViewContainerRef(vcr);
+    this.username= this.route.snapshot.paramMap.get('username');
   }
 
   ngOnInit() {
-    this.username= this.route.snapshot.paramMap.get('username');
 
     if (this.username === localStorage.getItem('username')) {
       this.isCurrentUser = true;
