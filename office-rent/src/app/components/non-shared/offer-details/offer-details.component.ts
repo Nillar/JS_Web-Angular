@@ -41,7 +41,7 @@ export class OfferDetailsComponent implements OnInit {
     }
     this.model.content = '';
 
-    this.sellerEmail = localStorage.getItem('email');
+
     this.offerId = this.route.snapshot.paramMap.get('id');
     this.comment = this.fb.group({
       content: ['', [Validators.minLength(1), Validators.maxLength(200)]]
@@ -53,6 +53,11 @@ export class OfferDetailsComponent implements OnInit {
       this.offer = data;
       if (this.offer['author'] === localStorage.getItem('username')) {
         this.isAuthor = true;
+        this.sellerEmail = localStorage.getItem('email');
+      } else {
+        this.reqHandlerService.getUserDetails(this.offer['author']).subscribe(data => {
+          this.sellerEmail = data[0].email;
+        })
       }
     }, err => {
       this.toastr.error('Loading unsuccessful', 'Error');
@@ -65,7 +70,7 @@ export class OfferDetailsComponent implements OnInit {
     this.reqHandlerService.getOfferComments(this.offerId).subscribe(data => {
       this.offerComments = data;
       this.loader = false;
-    },err=>{
+    }, err => {
       this.loader = false;
       this.toastr.info('Could not load comments');
       return;
@@ -90,7 +95,7 @@ export class OfferDetailsComponent implements OnInit {
       this.reqHandlerService.getOfferComments(this.offerId).subscribe(data => {
         this.offerComments = data;
         this.toastr.success('Comment Created', 'Success');
-        this.model.content='';
+        this.model.content = '';
         this.comment = this.fb.group({
           content: ['', [Validators.minLength(1), Validators.maxLength(200)]]
         });
@@ -113,12 +118,12 @@ export class OfferDetailsComponent implements OnInit {
         this.loader = false;
         this.router.navigate(['/offers']);
 
-      }, err2=> {
+      }, err2 => {
         this.toastr.error('Deleting comments failed', 'Error');
         this.loader = false;
         return;
       })
-    }, err=>{
+    }, err => {
       this.toastr.error('Deleting offer failed', 'Error');
       this.loader = false;
       return;
@@ -127,19 +132,19 @@ export class OfferDetailsComponent implements OnInit {
 
   deleteComment(id) {
     this.router.navigate([`/offers/${this.offerId}`]);
-    this.reqHandlerService.deleteComment(id).subscribe(data=>{
+    this.reqHandlerService.deleteComment(id).subscribe(data => {
       this.reqHandlerService.getOfferComments(this.offerId).subscribe(data2 => {
         this.toastr.info('Comment Deleted');
         this.offerComments = data2;
         this.comment = this.fb.group({
           content: ['', [Validators.minLength(1), Validators.maxLength(200)]]
         });
-      }, err2=>{
+      }, err2 => {
         this.toastr.error("Failed to load offer comments");
         this.loader = false;
       });
       this.comment.reset();
-    }, err=>{
+    }, err => {
       this.toastr.error('Failed to delete comment');
       this.loader = false;
       return;
