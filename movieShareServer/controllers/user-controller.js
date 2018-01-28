@@ -67,8 +67,9 @@ module.exports = {
 
     getCurrentUser: (req, res) => {
         let userId = req.params.id;
-
-        User.findById(userId).then(user => {
+        console.log(userId);
+        User.findOne({resetPasswordToken: userId}).then(user => {
+            console.log(user);
             if (!user) {
                 return res.status(404).json({
                     success: false,
@@ -106,7 +107,7 @@ module.exports = {
                     }
 
                     user.resetPasswordToken = token;
-                    user.resetPasswordExpires = Date.now() + 600000; //10 min in milliseconds
+                    user.resetPasswordExpires = Date.now() + 3600000; //10 min in milliseconds
 
                     user.save(function (err) {
                         done(err, token, user);
@@ -156,6 +157,7 @@ module.exports = {
             function (done) {
                 User.findOne({resetPasswordToken: token, resetPasswordExpires: {$gt: Date.now()}})
                     .then(user => {
+                        console.log(user);
                         if (!user) {
                             return res.json({
                                 success: false,
@@ -170,7 +172,7 @@ module.exports = {
                             let newHashedPass = encryption.generateHashedPassword(newSalt, req.body.password).trim();
 
                             user.hashedPass = newHashedPass;
-                            user.repeatPass = req.body.repeatPass;
+                            user.repeatPass = newHashedPass;
                             user.salt = newSalt;
                             user.resetPasswordExpires = undefined;
                             user.resetPasswordToken = undefined;
