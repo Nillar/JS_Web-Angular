@@ -11,13 +11,14 @@ module.exports = new PassportLocalStrategy({
 }, (req, username, password, done) => {
     const salt = encryption.generateSalt();
     const hashedPass = encryption.generateHashedPassword(salt, password).trim();
+    const hashedRepeatPass = encryption.generateHashedPassword(salt,password).trim();
     const user = {
         username: username.trim(),
         email: req.body.email.trim(),
         firstName: req.body.firstName.trim(),
         lastName: req.body.lastName.trim(),
         hashedPass: hashedPass,
-        repeatPass: req.body.repeatPass.trim(),
+        repeatPass: hashedRepeatPass,
         salt
     };
 

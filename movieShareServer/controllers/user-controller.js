@@ -64,6 +64,7 @@ module.exports = {
             })
         })(req, res, next)
     },
+
     getCurrentUser: (req, res) => {
         let userId = req.params.id;
 
@@ -117,7 +118,7 @@ module.exports = {
                 let smtpTransport = nodemailer.createTransport({
                     service: 'Gmail',
                     auth: {
-                        user: process.env.EEMAIl,
+                        user: process.env.EMAIl,
                         pass: process.env.PASSWORD
                     }
                 });
