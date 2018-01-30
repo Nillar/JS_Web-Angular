@@ -65,6 +65,14 @@ module.exports = {
         })(req, res, next)
     },
 
+    logoutGet: (req, res) => {
+        req.logout();
+        return res.status(200).json({
+            success: true,
+            message: 'You have successfully logged out'
+        })
+    },
+
     getCurrentUser: (req, res) => {
         let userId = req.params.id;
         console.log(userId);
