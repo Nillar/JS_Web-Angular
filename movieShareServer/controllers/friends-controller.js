@@ -1,0 +1,199 @@
+const encryption = require('../util/encryption');
+const crypto = require('crypto');
+const async = require('async');
+const nodemailer = require('nodemailer');
+const User = require('mongoose').model('User');
+const passport = require('passport');
+const authValidation = require('./../util/authValidation');
+const friends = require('mongoose-friends');
+// const userController = require('./user-controller');
+
+module.exports = {
+
+    getAllFriends: (req, res) => {
+
+        console.log('in');
+
+        User.findOne({username: req.params.username}).then(user => {
+            if (!user) {
+                return res.status(404).json({
+                    success: false,
+                    message: 'User not found'
+                });
+            }
+
+            User.getFriends(user._id, function (err, friendships) {
+                let friendsArr = [];
+                friendships.map(data => {
+                    if (data.status === 'accepted') {
+                        friendsArr.push({
+                            _id: data._id,
+                            username: data.friend.username,
+                            firstName: data.friend.firstName,
+                            lastName: data.friend.lastName
+                        })
+                    }
+                });
+
+                return res.status(200).json({
+                    success: true,
+                    friends: friendsArr
+                })
+            })
+        }).catch(err => {
+            res.status(404).json({
+                success: false,
+                message: 'User not found'
+            })
+        })
+    },
+    sendFriendRequest: (req, res) => {
+        async.waterfall([
+            function (done) {
+                let senderId = '';
+                let recipientId = '';
+
+                User.findOne({username: req.body.sender}).then(user => {
+                    if (!user) {
+                        return res.status(404).json({
+                            success: false,
+                            message: 'User not found'
+                        });
+                    }
+
+                    senderId = user._id;
+
+                    User.findOne({username: req.body.recipient}).then(user => {
+                        // console.log(user);
+                        if (!user) {
+                            return res.status(404).json({
+                                success: false,
+                                message: 'User not found'
+                            });
+                        }
+
+                        recipientId = user._id;
+
+                        User.requestFriend(senderId, recipientId);
+                        return res.status(200).json({
+                            success: true,
+                            message: 'Friend request sent'
+                        });
+                    }).catch(err => {
+                        res.status(404).json({
+                            success: false,
+                            message: 'User not found'
+                        })
+                    });
+                }).catch(err => {
+                    res.status(404).json({
+                        success: false,
+                        message: 'User not found'
+                    })
+                });
+
+            }
+        ], function (err) {
+            if (err) {
+                console.log(err);
+                return;
+            }
+        });
+    },
+    acceptFriendRequest: (req, res) => {
+        async.waterfall([
+            function (done) {
+                let senderId = '';
+                let recipientId = '';
+
+                User.findOne({username: req.body.sender}).then(user => {
+                    if (!user) {
+                        return res.status(404).json({
+                            success: false,
+                            message: 'User not found'
+                        });
+
+                    }
+
+                    senderId = user._id;
+
+                    User.findOne({username: req.body.recipient}).then(user => {
+                        // console.log(user);
+                        if (!user) {
+                            return res.status(404).json({
+                                success: false,
+                                message: 'User not found'
+                            });
+                        }
+
+                        recipientId = user._id;
+
+                        User.requestFriend(senderId, recipientId);
+                        return res.status(200).json({
+                            success: true,
+                            message: 'You are now friends'
+                        });
+                    }).catch(err => {
+                        res.status(404).json({
+                            success: false,
+                            message: 'User not found'
+                        })
+                    });
+                }).catch(err => {
+                    res.status(404).json({
+                        success: false,
+                        message: 'User not found'
+                    })
+                });
+
+            }
+        ], function (err) {
+            if (err) {
+                console.log(err);
+                return;
+            }
+        });
+    },
+    removeFriend: (req, res)=>{
+        let senderId = '';
+        let recipientId = '';
+        User.findOne({username: req.body.sender}).then(user => {
+            if (!user) {
+                return res.status(404).json({
+                    success: false,
+                    message: 'User not found'
+                });
+            }
+
+            senderId = user._id;
+
+            User.findOne({username: req.body.recipient}).then(user => {
+                // console.log(user);
+                if (!user) {
+                    return res.status(404).json({
+                        success: false,
+                        message: 'User not found'
+                    });
+                }
+
+                recipientId = user._id;
+
+                User.removeFriend(senderId, recipientId);
+                return res.status(200).json({
+                    success: true,
+                    message: 'Friend removed'
+                });
+            }).catch(err => {
+                res.status(404).json({
+                    success: false,
+                    message: 'User not found'
+                })
+            });
+        }).catch(err => {
+            res.status(404).json({
+                success: false,
+                message: 'User not found'
+            })
+        });
+    }
+};

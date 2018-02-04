@@ -7,3 +7,5 @@ require('./config/routes')(app);
 require('dotenv').config();
 
 app.listen(config.port);
+
+module.exports = app;

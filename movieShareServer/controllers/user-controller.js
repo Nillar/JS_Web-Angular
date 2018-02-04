@@ -97,6 +97,31 @@ module.exports = {
         })
     },
 
+    getCurrentUserByUsername: (req, res) => {
+        console.log('here');
+        let username = req.params.username.toString();
+        console.log(username);
+        User.findOne({username: username}).then(user => {
+            console.log(user);
+            if (!user) {
+                return res.status(404).json({
+                    success: false,
+                    message: 'User not found'
+                });
+            }
+
+            return res.status(200).json({
+                success: true,
+                user
+            })
+        }).catch(err => {
+            res.status(404).json({
+                success: false,
+                message: 'User not found'
+            })
+        })
+    },
+
     forgottenPassword: (req, res) => {
         async.waterfall([
             function (done) {

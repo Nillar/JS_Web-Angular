@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const encryption = require('../util/encryption');
+const friends = require("mongoose-friends");
 
 const userSchema = new mongoose.Schema({
     username: {type: mongoose.Schema.Types.String, required: true, unique: true},
@@ -15,7 +16,7 @@ const userSchema = new mongoose.Schema({
     isAdmin: {type: mongoose.Schema.Types.Boolean, default: false},
 });
 
-
+userSchema.plugin(friends({pathName: "request"}));
 
 userSchema.method({
     authenticate: function (password) {

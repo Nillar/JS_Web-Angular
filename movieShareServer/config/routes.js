@@ -6,10 +6,15 @@ module.exports = app => {
     app.get('/logout', controllers.user.logoutGet);
 
     app.get('/getUser/:id', controllers.user.getCurrentUser);
+    app.get('/getUsername/:username', controllers.user.getCurrentUserByUsername);
     app.post('/forgot', controllers.user.forgottenPassword);
     app.post('/reset', controllers.user.resetPassword);
 
+    app.post('/request', controllers.friends.sendFriendRequest);
+    app.post('/accept', controllers.friends.acceptFriendRequest);
+    app.post('/remove', controllers.friends.removeFriend);
 
+    app.get('/friends/:username', controllers.friends.getAllFriends);
 
     app.all('*', (req, res) => {
         res.status(404);
