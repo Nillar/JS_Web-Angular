@@ -3,6 +3,7 @@ const crypto = require('crypto');
 const async = require('async');
 const nodemailer = require('nodemailer');
 const User = require('mongoose').model('User');
+const Notification = require('mongoose').model('Notification');
 const passport = require('passport');
 const authValidation = require('./../util/authValidation');
 const friends = require('mongoose-friends');
@@ -75,6 +76,16 @@ module.exports = {
                         recipientId = user._id;
 
                         User.requestFriend(senderId, recipientId);
+
+                        Notification.create({
+                            sender: req.body.sender,
+                            recipient: req.body.recipient,
+                            title: 'Friend request',
+                            text: `${req.body.sender} wants to be friends`,
+                            expirationDate: Date.now() + 2592000000, // 30 days
+                            isRead: false
+                        });
+
                         return res.status(200).json({
                             success: true,
                             message: 'Friend request sent'
@@ -101,6 +112,9 @@ module.exports = {
         });
     },
     acceptFriendRequest: (req, res) => {
+        let notificationId = req.body.id;
+
+
         async.waterfall([
             function (done) {
                 let senderId = '';
@@ -128,7 +142,23 @@ module.exports = {
 
                         recipientId = user._id;
 
-                        User.requestFriend(senderId, recipientId);
+                        User.requestFriend(senderId, recipientId, function notify() {
+                            Notification.create({
+                                sender: req.body.sender,
+                                recipient: req.body.recipient,
+                                title: 'Friend accepted',
+                                text: `You are now friends with ${req.body.sender}`,
+                                expirationDate: Date.now() + 2592000000, // 30 days
+                                isRead: false
+                            });
+                            Notification.findByIdAndUpdate({_id: notificationId}).then(data => {
+                                data.isRead = true;
+                                data.save();
+
+                            }).catch(err => {
+                                console.log(err);
+                            });
+                        });
                         return res.status(200).json({
                             success: true,
                             message: 'You are now friends'
@@ -154,7 +184,7 @@ module.exports = {
             }
         });
     },
-    removeFriend: (req, res)=>{
+    removeFriend: (req, res) => {
         let senderId = '';
         let recipientId = '';
         User.findOne({username: req.body.sender}).then(user => {
@@ -168,7 +198,7 @@ module.exports = {
             senderId = user._id;
 
             User.findOne({username: req.body.recipient}).then(user => {
-                // console.log(user);
+                console.log(data.isRead);
                 if (!user) {
                     return res.status(404).json({
                         success: false,
@@ -195,5 +225,42 @@ module.exports = {
                 message: 'User not found'
             })
         });
+    },
+    getNotificationsByUsername: (req, res) => {
+        Notification.find({recipient: req.body.recipient}).then(data => {
+            data.map(notif => {
+                let currentTime = new Date;
+                if ((Number(notif.expirationDate.getTime()) < Number(currentTime.getTime())) && notif.isRead === true) {
+                    Notification.findByIdAndRemove(notif._id).then(data2 => {
+                        console.log(data2);
+                    }).catch(err => {
+                        console.log(err);
+                    });
+                }
+            });
+
+            return res.status(200).json({
+                success: true,
+                notifications: data
+            })
+        }).catch(err => {
+            console.log(err);
+            return;
+        })
+    },
+    markNotificationAsRead: (req, res) => {
+        let notificationId = req.params.id;
+
+        Notification.findByIdAndUpdate({_id: notificationId}).then(data => {
+            data.isRead = true;
+            data.save();
+            return res.status(200).json({
+                success: true,
+                status: 'Notification is now read',
+                isRead: true
+            })
+        }).catch(err => {
+            console.log(err);
+        })
     }
 };

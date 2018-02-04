@@ -15,6 +15,8 @@ module.exports = app => {
     app.post('/remove', controllers.friends.removeFriend);
 
     app.get('/friends/:username', controllers.friends.getAllFriends);
+    app.post('/notifications', controllers.friends.getNotificationsByUsername);
+    app.get('/notifications/:id', controllers.friends.markNotificationAsRead);
 
     app.all('*', (req, res) => {
         res.status(404);

@@ -140,7 +140,7 @@ module.exports = {
                     }
 
                     user.resetPasswordToken = token;
-                    user.resetPasswordExpires = Date.now() + 3600000; //10 min in milliseconds
+                    user.resetPasswordExpires = Date.now() + 3600000; //60 min in milliseconds
 
                     user.save(function (err) {
                         done(err, token, user);
