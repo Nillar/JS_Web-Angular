@@ -41,7 +41,7 @@ module.exports = new PassportLocalStrategy({
                 isAdmin: user.isAdmin
             };
 
-            return done(null, `bearer ${token}`, data)
+            return done(null, token, data)
         }).catch(err => {
         if (err) {
             console.log(err);

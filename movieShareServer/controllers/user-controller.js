@@ -75,7 +75,6 @@ module.exports = {
 
     getCurrentUser: (req, res) => {
         let userId = req.params.id;
-        console.log(userId);
         User.findOne({resetPasswordToken: userId}).then(user => {
             console.log(user);
             if (!user) {
@@ -98,9 +97,7 @@ module.exports = {
     },
 
     getCurrentUserByUsername: (req, res) => {
-        console.log('here');
         let username = req.params.username.toString();
-        console.log(username);
         User.findOne({username: username}).then(user => {
             console.log(user);
             if (!user) {

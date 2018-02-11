@@ -114,7 +114,6 @@ module.exports = {
     acceptFriendRequest: (req, res) => {
         let notificationId = req.body.id;
 
-
         async.waterfall([
             function (done) {
                 let senderId = '';
