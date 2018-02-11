@@ -8,6 +8,8 @@ const passport = require('passport');
 const authValidation = require('./../util/authValidation');
 const friends = require('mongoose-friends');
 // const userController = require('./user-controller');
+const authCheck = require('../middleware/auth-check');
+const jwt = require('jsonwebtoken');
 
 module.exports = {
 
@@ -225,27 +227,46 @@ module.exports = {
             })
         });
     },
-    getNotificationsByUsername: (req, res) => {
-        Notification.find({recipient: req.body.recipient}).then(data => {
-            data.map(notif => {
-                let currentTime = new Date;
-                if ((Number(notif.expirationDate.getTime()) < Number(currentTime.getTime())) && notif.isRead === true) {
-                    Notification.findByIdAndRemove(notif._id).then(data2 => {
-                        console.log(data2);
-                    }).catch(err => {
-                        console.log(err);
-                    });
-                }
-            });
+    getNotificationsByUsername: async (req, res) => {
 
-            return res.status(200).json({
-                success: true,
-                notifications: data
+        if (!req.headers.authorization) {
+            return res.status(401).json({
+                success: false,
+                message: 'Unauthorized'
+            }).end()
+        }
+
+        let token = req.headers.authorization.split(' ')[1];
+        try{
+            let decoded = await jwt.verify(token, process.env.SECRET_STRING);
+
+            Notification.find({recipient: req.body.recipient}).then(data => {
+                data.map(notif => {
+                    let currentTime = new Date;
+                    if ((Number(notif.expirationDate.getTime()) < Number(currentTime.getTime())) && notif.isRead === true) {
+                        Notification.findByIdAndRemove(notif._id).then(data2 => {
+                            console.log(data2);
+                        }).catch(err => {
+                            console.log(err);
+                        });
+                    }
+                });
+
+                return res.status(200).json({
+                    success: true,
+                    notifications: data
+                })
+            }).catch(err => {
+                console.log(err);
+                return;
             })
-        }).catch(err => {
-            console.log(err);
-            return;
-        })
+        }catch (err) {
+            return res.json({
+                success: false,
+                message: 'Invalid token'
+            })
+        }
+
     },
     markNotificationAsRead: (req, res) => {
         let notificationId = req.params.id;

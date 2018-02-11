@@ -1,9 +1,12 @@
 const jwt = require('jsonwebtoken');
 const User = require('mongoose').model('User');
 
-module.exports = async (req, res, next) =>  {
+module.exports = async (req, res) =>  {
     if (!req.headers.authorization) {
-        return res.status(401).end();
+        return res.status(401).end().json({
+            success: false,
+            message: 'Unauthorized'
+        });
     }
 
     // get the last part from a authorization header string like "bearer token-value"
@@ -22,6 +25,6 @@ module.exports = async (req, res, next) =>  {
 
         req.user = user;
 
-        return next();
+        // return next();
     });
 };
