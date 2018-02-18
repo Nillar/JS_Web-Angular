@@ -18,6 +18,9 @@ module.exports = app => {
     app.post('/notifications', controllers.friends.getNotificationsByUsername);
     app.get('/notifications/:id', controllers.friends.markNotificationAsRead);
 
+    app.post('/search', controllers.movies.searchMovie);
+    app.post('/create', controllers.movies.createPost)
+
     app.all('*', (req, res) => {
         res.status(404);
         res.send('404 Not Found');

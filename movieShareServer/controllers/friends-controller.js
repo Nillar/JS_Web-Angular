@@ -15,8 +15,6 @@ module.exports = {
 
     getAllFriends: (req, res) => {
 
-        console.log('in');
-
         User.findOne({username: req.params.username}).then(user => {
             if (!user) {
                 return res.status(404).json({
