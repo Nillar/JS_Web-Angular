@@ -8,6 +8,7 @@ const userSchema = new mongoose.Schema({
     firstName: {type: mongoose.Schema.Types.String, required: true},
     lastName: {type: mongoose.Schema.Types.String, required: true},
     friendsArr: {type: mongoose.Schema.Types.Array, default: []},
+    likedPosts: {type: mongoose.Schema.Types.Array},
     hashedPass: {type: mongoose.Schema.Types.String, required: true},
     repeatPass: {type: mongoose.Schema.Types.String, required: true},
     resetPasswordToken: {type: mongoose.Schema.Types.String},

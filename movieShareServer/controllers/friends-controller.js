@@ -13,6 +13,26 @@ const jwt = require('jsonwebtoken');
 
 module.exports = {
 
+    searchForUserByUsername: (req, res) => {
+        User.findOne({username: req.body.username}).then(data => {
+            let user = {
+                username: data.username,
+                firstName: data.firstName,
+                lastName: data.lastName,
+                id: data._id
+            };
+            return res.json({
+                success: true,
+                user: user
+            })
+        }).catch(err=>{
+            return res.json({
+                success: false,
+                message: err.message
+            })
+        })
+    },
+
     getAllFriends: (req, res) => {
 
         User.findOne({username: req.params.username}).then(user => {
@@ -235,7 +255,7 @@ module.exports = {
         }
 
         let token = req.headers.authorization.split(' ')[1];
-        try{
+        try {
             let decoded = await jwt.verify(token, process.env.SECRET_STRING);
 
             Notification.find({recipient: req.body.recipient}).then(data => {
@@ -255,10 +275,12 @@ module.exports = {
                     notifications: data
                 })
             }).catch(err => {
-                console.log(err);
-                return;
+                return res.json({
+                    success: false,
+                    message: err.message
+                });
             })
-        }catch (err) {
+        } catch (err) {
             return res.json({
                 success: false,
                 message: 'Invalid token'

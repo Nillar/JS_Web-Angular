@@ -10,6 +10,7 @@ module.exports = app => {
     app.post('/forgot', controllers.user.forgottenPassword);
     app.post('/reset', controllers.user.resetPassword);
 
+    app.post('/search/user', controllers.friends.searchForUserByUsername);
     app.post('/request', controllers.friends.sendFriendRequest);
     app.post('/accept', controllers.friends.acceptFriendRequest);
     app.post('/remove', controllers.friends.removeFriend);
@@ -19,7 +20,18 @@ module.exports = app => {
     app.get('/notifications/:id', controllers.friends.markNotificationAsRead);
 
     app.post('/search', controllers.movies.searchMovie);
-    app.post('/create', controllers.movies.createPost)
+    app.post('/createPost', controllers.movies.createPost);
+    app.delete('/deletePost', controllers.movies.deletePost);
+    app.get('/editPost', controllers.movies.getEditPost);
+    app.post('/editPost/:postId', controllers.movies.editPost);
+    app.get('/details/:movieId', controllers.movies.getMovieDetails);
+    app.get('/postDetails/:postId', controllers.movies.getPostDetails);
+    app.post('/likePost', controllers.movies.likePost);
+
+    app.post('/createComment', controllers.movies.postComment);
+    app.delete('/delete/:commentId', controllers.movies.deleteComment);
+
+    app.get('/:username/posts', controllers.movies.getPostsByUsername);
 
     app.all('*', (req, res) => {
         res.status(404);

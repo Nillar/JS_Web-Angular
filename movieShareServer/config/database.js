@@ -16,6 +16,7 @@ module.exports = config => {
     require('../models/User');
     require('../models/Notification');
     require('../models/Post');
+    require('../models/Comment');
 
     db.on('error', reason => {
         console.log(reason);

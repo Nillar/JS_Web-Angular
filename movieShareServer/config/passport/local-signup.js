@@ -19,6 +19,7 @@ module.exports = new PassportLocalStrategy({
         lastName: req.body.lastName.trim(),
         hashedPass: hashedPass,
         repeatPass: hashedRepeatPass,
+        likedPosts: [],
         salt
     };
 
@@ -36,6 +37,7 @@ module.exports = new PassportLocalStrategy({
                 lastName: user.lastName,
                 friendsArr: user.friendsArr,
                 userId: user._id,
+                likedPosts: [],
                 isAdmin: user.isAdmin
             };
             return done(null, token, data);
