@@ -23,8 +23,9 @@ module.exports = app => {
     app.post('/createPost', controllers.movies.createPost);
     app.delete('/deletePost', controllers.movies.deletePost);
     app.get('/editPost', controllers.movies.getEditPost);
-    app.post('/editPost/:postId', controllers.movies.editPost);
+    app.put('/editPost/:postId', controllers.movies.editPost);
     app.get('/details/:movieId', controllers.movies.getMovieDetails);
+    app.get('/credits/:movieId', controllers.movies.getMovieCredits);
     app.get('/postDetails/:postId', controllers.movies.getPostDetails);
     app.post('/likePost', controllers.movies.likePost);
 
@@ -32,6 +33,7 @@ module.exports = app => {
     app.delete('/delete/:commentId', controllers.movies.deleteComment);
 
     app.get('/:username/posts', controllers.movies.getPostsByUsername);
+    app.get('/feed', controllers.movies.getFeed);
 
     app.all('*', (req, res) => {
         res.status(404);

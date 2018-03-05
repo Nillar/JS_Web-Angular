@@ -13,24 +13,43 @@ const jwt = require('jsonwebtoken');
 
 module.exports = {
 
-    searchForUserByUsername: (req, res) => {
-        User.findOne({username: req.body.username}).then(data => {
-            let user = {
-                username: data.username,
-                firstName: data.firstName,
-                lastName: data.lastName,
-                id: data._id
-            };
-            return res.json({
-                success: true,
-                user: user
+    searchForUserByUsername: async (req, res) => {
+        if (!req.headers.authorization) {
+            return res.status(401).json({
+                success: false,
+                message: 'Unauthorized'
+            }).end()
+        }
+
+        let token = req.headers.authorization.split(' ')[1];
+
+        try {
+            let decoded = await jwt.verify(token, process.env.SECRET_STRING);
+
+            User.findOne({username: req.body.username}).then(data => {
+                let user = {
+                    username: data.username,
+                    firstName: data.firstName,
+                    lastName: data.lastName,
+                    id: data._id
+                };
+                return res.json({
+                    success: true,
+                    user: user
+                })
+            }).catch(err => {
+                return res.json({
+                    success: false,
+                    message: err.message
+                })
             })
-        }).catch(err=>{
+
+        } catch (err) {
             return res.json({
                 success: false,
                 message: err.message
             })
-        })
+        }
     },
 
     getAllFriends: (req, res) => {
@@ -178,6 +197,26 @@ module.exports = {
                                 console.log(err);
                             });
                         });
+
+                        User.find({_id: senderId}).then(data => {
+                            let friendId = recipientId.toString();
+                            data[0].friendsArr.push(friendId);
+                            data[0].save();
+
+                            // let currentFriends = [];
+                            //
+                            // for (let obj of data[0].friendsArr) {
+                            //     currentFriends.push(obj.toString());
+                            // }
+                            // console.log(currentFriends);
+                            // data[0].save();
+
+                        });
+                        User.find({_id: recipientId}).then(data => {
+                            let friendId = senderId.toString();
+                            data[0].friendsArr.push(friendId.toString());
+                            data[0].save();
+                        });
                         return res.status(200).json({
                             success: true,
                             message: 'You are now friends'
@@ -194,7 +233,6 @@ module.exports = {
                         message: 'User not found'
                     })
                 });
-
             }
         ], function (err) {
             if (err) {

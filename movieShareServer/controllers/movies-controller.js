@@ -127,16 +127,17 @@ module.exports = {
             }).end()
         }
 
-        console.log(req.user);
-        // User.find({username: req.user})
-
         let token = req.headers.authorization.split(' ')[1];
         try {
             let decoded = await jwt.verify(token, process.env.SECRET_STRING);
             let userId = decoded.sub;
+            let currentUser = '';
 
+            await User.find({_id: userId}).then(data => {
+                currentUser = data[0].username;
+            });
 
-            Post.create({
+            await Post.create({
                 creator: userId,
                 date: Date.now(),
                 title: req.body.title,
@@ -146,6 +147,23 @@ module.exports = {
                 userReview: req.body.userReview,
                 userRating: req.body.userRating
             }).then(() => {
+
+                User.getFriends(userId, function (err, friendships) {
+
+                    for (let obj of friendships) {
+                        if (obj.status === 'accepted') {
+                            Notification.create({
+                                sender: currentUser,
+                                recipient: obj.friend.username,
+                                title: `New Movie watched by a friend`,
+                                text: `${obj.friend.firstName} ${obj.friend.lastName} watched a movie recently!`,
+                                expirationDate: Date.now() + 2592000000, // 30 days
+                                isRead: false
+                            })
+                        }
+                    }
+                });
+
                 return res.status(201).json({
                     success: true,
                     message: 'Post created successfully'
@@ -229,7 +247,7 @@ module.exports = {
                     success: true,
                     post: data
                 });
-            }).catch(err=>{
+            }).catch(err => {
                 return res.json({
                     success: false,
                     message: err.message
@@ -243,7 +261,7 @@ module.exports = {
             })
         }
     },
-    editPost: async (req, res)=>{
+    editPost: async (req, res) => {
         if (!req.headers.authorization) {
             return res.status(401).json({
                 success: false,
@@ -266,7 +284,7 @@ module.exports = {
                     message: 'Post edited successfully',
                     post: data
                 });
-            }).catch(err=>{
+            }).catch(err => {
                 return res.json({
                     success: false,
                     message: err.message
@@ -298,14 +316,14 @@ module.exports = {
             let commentsArr = [];
             let postObj = {};
 
+            await Post.find({_id: postId}).then(data => {
+                postObj = data;
+            });
+
             await Comment.find({moviePostId: postId}).then(data => {
                 for (let obj of data) {
                     commentsArr.push(obj);
                 }
-            });
-
-            await Post.find({_id: postId}).then(data => {
-                postObj = data;
             });
             return res.json({
                 success: true,
@@ -335,7 +353,6 @@ module.exports = {
 
         try {
             let decoded = await jwt.verify(token, process.env.SECRET_STRING);
-            console.log(decoded.sub);
 
             let options = {
                 "method": "GET",
@@ -345,7 +362,7 @@ module.exports = {
                 "headers": {}
             };
 
-            let request = http.request(options, function (response) {
+            let request = await http.request(options, function (response) {
                 let chunks = [];
 
                 response.on("data", function (chunk) {
@@ -355,13 +372,81 @@ module.exports = {
                 //https://image.tmdb.org/t/p/w185/9O7gLzmreU0nGkIB6K3BsJbzvNv.jpg
                 //w185, original, w500 and other sizes of the poster
                 //https://api.themoviedb.org/3/movie/27205/credits?api_key=...  27205 = movie id
+                // https://image.tmdb.org/t/p/w185/5VTN0pR8gcqV3EPUHHfMGnJYN9L.jpg
 
                 response.on("end", function () {
                     let body = Buffer.concat(chunks);
+                    let movieObj = JSON.parse(body.toString());
+
+                    let movieResultObj = {
+                        id: movieObj.id,
+                        title: movieObj.title,
+                        plot: movieObj.overview,
+                        poster: `https://image.tmdb.org/t/p/w500${movieObj.poster_path}`,
+                        year: movieObj.release_date
+                    };
 
                     return res.status(200).json({
                         success: true,
-                        movies: JSON.parse(body.toString())
+                        movie: movieResultObj
+                    })
+                });
+            });
+
+            console.log(movieResultObj);
+
+            request.write("{}");
+            request.end();
+
+        } catch (err) {
+            return res.json({
+                success: false,
+                message: err.message
+            })
+        }
+    },
+    getMovieCredits: async (req, res) => {
+        if (!req.headers.authorization) {
+            return res.status(401).json({
+                success: false,
+                message: 'Unauthorized'
+            }).end()
+        }
+
+        let movieId = req.params.movieId;
+
+        let token = req.headers.authorization.split(' ')[1];
+
+        try {
+            let decoded = await jwt.verify(token, process.env.SECRET_STRING);
+
+            let options = {
+                "method": "GET",
+                "hostname": "api.themoviedb.org",
+                "port": null,
+                "path": `https://api.themoviedb.org/3/movie/${movieId}/credits?api_key=${process.env.TMBD_API_KEY}`,
+                "headers": {}
+            };
+
+            let request = await http.request(options, function (response) {
+                let chunks = [];
+
+                response.on("data", function (chunk) {
+                    chunks.push(chunk);
+                });
+
+                //https://image.tmdb.org/t/p/w185/9O7gLzmreU0nGkIB6K3BsJbzvNv.jpg
+                //w185, original, w500 and other sizes of the poster
+                //https://api.themoviedb.org/3/movie/27205/credits?api_key=...  27205 = movie id
+                // https://image.tmdb.org/t/p/w185/5VTN0pR8gcqV3EPUHHfMGnJYN9L.jpg
+
+                response.on("end", function () {
+                    let body = Buffer.concat(chunks);
+                    let creditsObj = JSON.parse(body.toString());
+
+                    return res.status(200).json({
+                        success: true,
+                        cast: creditsObj.cast
                     })
                 });
             });
@@ -524,8 +609,6 @@ module.exports = {
         }
 
         let token = req.headers.authorization.split(' ')[1];
-        let decoded = await jwt.verify(token, process.env.SECRET_STRING);
-
 
         try {
             let decoded = await jwt.verify(token, process.env.SECRET_STRING);
@@ -558,12 +641,99 @@ module.exports = {
                 })
             });
 
-
         } catch (err) {
             return res.json({
                 success: false,
                 message: err.message
             })
         }
-    }
+    },
+    getFeed: async (req, res) => {
+        if (!req.headers.authorization) {
+            return res.status(401).json({
+                success: false,
+                message: 'Unauthorized'
+            }).end()
+        }
+
+        let token = req.headers.authorization.split(' ')[1];
+
+        try {
+            let decoded = await jwt.verify(token, process.env.SECRET_STRING);
+            let friendsIds = [];
+            await User.findOne({_id: decoded.sub}).then(user => {
+                if (!user) {
+                    return res.status(404).json({
+                        success: false,
+                        message: 'User not found'
+                    });
+                }
+
+                if (user.friendsArr.length > 0) {
+                    for (let obj of user.friendsArr) {
+                        friendsIds.push(obj.toString());
+                    }
+                }
+
+            }).catch(err => {
+                return res.status(404).json({
+                    success: false,
+                    message: 'User not found'
+                })
+            });
+
+            if (friendsIds.length > 0) {
+                let postsFeed = [];
+                for (let obj of friendsIds) {
+                    // console.log(obj);
+                    await Post.find({creator: obj}).sort({date: -1}).limit(1).then(data => {
+                        if (data.length > 0) {
+                            postsFeed.push(data);
+                        }
+                    }).catch(err=>{
+                        return res.status(404).json({
+                            success: false,
+                            message: err.message
+                        })
+                    })
+                }
+
+                return res.status(200).json({
+                    success: true,
+                    feed: postsFeed
+                })
+
+            }
+
+            else if(friendsIds.length === 0){
+                return res.status(200).json({
+                    success: true,
+                    message: 'No posts to display'
+                })
+            }
+        } catch (err) {
+            return res.json({
+                success: false,
+                message: err.message
+            })
+        }
+    },
+    // getFavorites: (req, res)=>{
+    //
+    // },
+    // addToFavoriteList: (req, res)=>{
+    //
+    // },
+    // removeFromFavoritesList: (req, res)=>{
+    //
+    // },
+    // getWishList:(req, res)=>{
+    //
+    // },
+    // addToWishList: (req, res)=>{
+    //
+    // },
+    // removeFromWishList: (req, res)=>{
+    //
+    // }
 };
