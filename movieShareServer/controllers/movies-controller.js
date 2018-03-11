@@ -13,8 +13,11 @@ const friends = require('mongoose-friends');
 const authCheck = require('../middleware/auth-check');
 const jwt = require('jsonwebtoken');
 const imdb = require('imdb-api');
-const jquery = require('jquery');
+const $ = require('jquery');
+// const $ = require('jQuery');
+const jsdom = require("jsdom");
 const http = require("https");
+
 
 module.exports = {
     searchMovie: async (req, res) => {
@@ -139,6 +142,7 @@ module.exports = {
 
             await Post.create({
                 creator: userId,
+                omdbMovieId: req.body.omdbMovieId,
                 date: Date.now(),
                 title: req.body.title,
                 year: req.body.year,
@@ -392,8 +396,6 @@ module.exports = {
                     })
                 });
             });
-
-            console.log(movieResultObj);
 
             request.write("{}");
             request.end();
@@ -690,7 +692,7 @@ module.exports = {
                         if (data.length > 0) {
                             postsFeed.push(data);
                         }
-                    }).catch(err=>{
+                    }).catch(err => {
                         return res.status(404).json({
                             success: false,
                             message: err.message
@@ -705,7 +707,7 @@ module.exports = {
 
             }
 
-            else if(friendsIds.length === 0){
+            else if (friendsIds.length === 0) {
                 return res.status(200).json({
                     success: true,
                     message: 'No posts to display'
@@ -718,22 +720,276 @@ module.exports = {
             })
         }
     },
-    // getFavorites: (req, res)=>{
-    //
-    // },
-    // addToFavoriteList: (req, res)=>{
-    //
-    // },
-    // removeFromFavoritesList: (req, res)=>{
-    //
-    // },
-    // getWishList:(req, res)=>{
-    //
-    // },
-    // addToWishList: (req, res)=>{
-    //
-    // },
-    // removeFromWishList: (req, res)=>{
-    //
-    // }
+    getFavoritesList: async (req, res) => {
+        if (!req.headers.authorization) {
+            return res.status(401).json({
+                success: false,
+                message: 'Unauthorized'
+            }).end()
+        }
+
+        let token = req.headers.authorization.split(' ')[1];
+        let currentUser = req.params.username;
+
+        try {
+            let decoded = await jwt.verify(token, process.env.SECRET_STRING);
+            let favoriteMoviesArr = [];
+
+            await User.find({username: currentUser}).then(data => {
+
+                for (let movie of data[0].favoritesList) {
+                    favoriteMoviesArr.push(movie[0]);
+                }
+            }).catch(err => {
+                return res.json({
+                    success: false,
+                    message: err.message
+                })
+            });
+
+            if (favoriteMoviesArr.length > 0) {
+
+                return res.json({
+                    success: true,
+                    favoriteMovies: favoriteMoviesArr
+                });
+            } else if (favoriteMoviesArr.length === 0) {
+                return res.json({
+                    success: false,
+                    message: 'No movies in this list'
+                });
+            }
+
+        } catch (err) {
+            return res.json({
+                success: false,
+                message: err.message
+            })
+        }
+    },
+    addToFavoriteList: async (req, res) => {
+        if (!req.headers.authorization) {
+            return res.status(401).json({
+                success: false,
+                message: 'Unauthorized'
+            }).end()
+        }
+
+        let token = req.headers.authorization.split(' ')[1];
+        let currentUser = req.params.username;
+        let currentMovie = req.body;
+
+        try {
+            let decoded = await jwt.verify(token, process.env.SECRET_STRING);
+            let favoriteMovies = [];
+
+            User.find({username: currentUser}).then(data => {
+                data[0].favoritesList.push(currentMovie);
+                data[0].save();
+
+                for (let movie of data[0].favoritesList) {
+                    favoriteMovies.push(movie[0]);
+                }
+
+                return res.json({
+                    success: true,
+                    message: 'Movie added to Favorites List',
+                    favoriteMovies: favoriteMovies
+                })
+            }).catch(err => {
+                return res.json({
+                    success: false,
+                    message: err.message
+                })
+            })
+
+        } catch (err) {
+            return res.json({
+                success: false,
+                message: err.message
+            })
+        }
+    },
+    removeFromFavoritesList: async (req, res) => {
+        if (!req.headers.authorization) {
+            return res.status(401).json({
+                success: false,
+                message: 'Unauthorized'
+            }).end()
+        }
+
+        let token = req.headers.authorization.split(' ')[1];
+        let currentUser = req.params.username;
+        let movieId = req.body.movieId;
+
+        try {
+            let decoded = await jwt.verify(token, process.env.SECRET_STRING);
+            let newFavoritesListArr = [];
+
+            await User.find({username: currentUser}).then(data => {
+                for (let movie of data[0].favoritesList) {
+                    if (movie[0].omdbId !== movieId) {
+                        newFavoritesListArr.push(movie);
+                    }
+                }
+
+                data[0].favoritesList = newFavoritesListArr;
+                data[0].save();
+
+                return res.json({
+                    success: true,
+                    message: 'Movie removed from list'
+                })
+
+
+            }).catch(err => {
+                return res.json({
+                    success: false,
+                    message: err.message
+                })
+            })
+
+        } catch (err) {
+            return res.json({
+                success: false,
+                message: err.message
+            })
+        }
+    },
+    getWishList: async (req, res) => {
+        if (!req.headers.authorization) {
+            return res.status(401).json({
+                success: false,
+                message: 'Unauthorized'
+            }).end()
+        }
+
+        let token = req.headers.authorization.split(' ')[1];
+        let currentUser = req.params.username;
+
+        try {
+            let decoded = await jwt.verify(token, process.env.SECRET_STRING);
+            let wishMoviesArr = [];
+
+            await User.find({username: currentUser}).then(data => {
+
+                for (let movie of data[0].wishList) {
+                    wishMoviesArr.push(movie[0]);
+                }
+            }).catch(err => {
+                return res.json({
+                    success: false,
+                    message: err.message
+                })
+            });
+
+            if (wishMoviesArr.length > 0) {
+
+                return res.json({
+                    success: true,
+                    wishMovies: wishMoviesArr
+                });
+            } else if (wishMoviesArr.length === 0) {
+                return res.json({
+                    success: false,
+                    message: 'No movies in this list'
+                });
+            }
+
+        } catch (err) {
+            return res.json({
+                success: false,
+                message: err.message
+            })
+        }
+    },
+    addToWishList: async (req, res) => {
+        if (!req.headers.authorization) {
+            return res.status(401).json({
+                success: false,
+                message: 'Unauthorized'
+            }).end()
+        }
+
+        let token = req.headers.authorization.split(' ')[1];
+        let currentUser = req.params.username;
+        let currentMovie = req.body;
+
+        try {
+            let decoded = await jwt.verify(token, process.env.SECRET_STRING);
+            let wishMovies = [];
+
+            User.find({username: currentUser}).then(data => {
+                data[0].wishMovies.push(currentMovie);
+                data[0].save();
+
+                for (let movie of data[0].wishMovies) {
+                    wishMovies.push(movie[0]);
+                }
+
+                return res.json({
+                    success: true,
+                    message: 'Movie added to Favorites List',
+                    wishMovies: wishMovies
+                })
+            }).catch(err => {
+                return res.json({
+                    success: false,
+                    message: err.message
+                })
+            })
+
+        } catch (err) {
+            return res.json({
+                success: false,
+                message: err.message
+            })
+        }
+    },
+    removeFromWishList: async (req, res) => {
+        if (!req.headers.authorization) {
+            return res.status(401).json({
+                success: false,
+                message: 'Unauthorized'
+            }).end()
+        }
+
+        let token = req.headers.authorization.split(' ')[1];
+        let currentUser = req.params.username;
+        let movieId = req.body.movieId;
+
+        try {
+            let decoded = await jwt.verify(token, process.env.SECRET_STRING);
+            let newWishListArr = [];
+
+            await User.find({username: currentUser}).then(data => {
+                for (let movie of data[0].wishList) {
+                    if (movie[0].omdbId !== movieId) {
+                        newWishListArr.push(movie);
+                    }
+                }
+
+                data[0].wishList = newWishListArr;
+                data[0].save();
+
+                return res.json({
+                    success: true,
+                    message: 'Movie removed from list'
+                })
+
+
+            }).catch(err => {
+                return res.json({
+                    success: false,
+                    message: err.message
+                })
+            })
+
+        } catch (err) {
+            return res.json({
+                success: false,
+                message: err.message
+            })
+        }
+    }
 };

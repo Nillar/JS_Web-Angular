@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 
 const postSchema = new mongoose.Schema({
     creator: {type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true},
+    omdbMovieId: {type:mongoose.Schema.Types.String, required: true},
     date: {type: mongoose.Schema.Types.Date, required: true, default: Date.now()},
     userRating: {type: mongoose.Schema.Types.Number, min: 1, max: 10},
     userReview: {type: mongoose.Schema.Types.String, minLength: 3, maxLength: 500},

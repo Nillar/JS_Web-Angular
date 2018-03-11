@@ -24,6 +24,7 @@ module.exports = app => {
     app.delete('/deletePost', controllers.movies.deletePost);
     app.get('/editPost', controllers.movies.getEditPost);
     app.put('/editPost/:postId', controllers.movies.editPost);
+
     app.get('/details/:movieId', controllers.movies.getMovieDetails);
     app.get('/credits/:movieId', controllers.movies.getMovieCredits);
     app.get('/postDetails/:postId', controllers.movies.getPostDetails);
@@ -34,6 +35,15 @@ module.exports = app => {
 
     app.get('/:username/posts', controllers.movies.getPostsByUsername);
     app.get('/feed', controllers.movies.getFeed);
+
+    app.get('/:username/favorites', controllers.movies.getFavoritesList);
+    app.get('/:username/wish', controllers.movies.getWishList);
+
+    app.post('/:username/favorites/add', controllers.movies.addToFavoriteList);
+    app.post('/:username/wish/add', controllers.movies.addToWishList);
+
+    app.delete('/:username/favorites/delete', controllers.movies.removeFromFavoritesList);
+    app.delete('/:username/wish/delete', controllers.movies.removeFromWishList);
 
     app.all('*', (req, res) => {
         res.status(404);

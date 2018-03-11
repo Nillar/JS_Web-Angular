@@ -64,7 +64,6 @@ module.exports = {
             })
         })(req, res, next)
     },
-
     logoutGet: (req, res) => {
         req.logout();
 
@@ -73,7 +72,6 @@ module.exports = {
             message: 'You have successfully logged out'
         })
     },
-
     getCurrentUser: (req, res) => {
         let userId = req.params.id;
         User.findOne({resetPasswordToken: userId}).then(user => {
@@ -96,7 +94,6 @@ module.exports = {
             })
         })
     },
-
     getCurrentUserByUsername: (req, res) => {
         let username = req.params.username.toString();
         User.findOne({username: username}).then(user => {
@@ -119,7 +116,6 @@ module.exports = {
             })
         })
     },
-
     forgottenPassword: (req, res) => {
         async.waterfall([
             function (done) {
@@ -180,7 +176,6 @@ module.exports = {
             }
         })
     },
-
     resetPassword: (req, res) => {
         let token = req.body.token;
 
