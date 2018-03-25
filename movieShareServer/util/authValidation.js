@@ -1,5 +1,4 @@
 const validator = require('validator');
-const User = require('mongoose').model('User');
 
 module.exports = {
     validateSignupForm: (payload) => {

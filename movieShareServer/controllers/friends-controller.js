@@ -1,14 +1,6 @@
-const encryption = require('../util/encryption');
-const crypto = require('crypto');
 const async = require('async');
-const nodemailer = require('nodemailer');
 const User = require('mongoose').model('User');
 const Notification = require('mongoose').model('Notification');
-const passport = require('passport');
-const authValidation = require('./../util/authValidation');
-const friends = require('mongoose-friends');
-// const userController = require('./user-controller');
-const authCheck = require('../middleware/auth-check');
 const jwt = require('jsonwebtoken');
 
 module.exports = {

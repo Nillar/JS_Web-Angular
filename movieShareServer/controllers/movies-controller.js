@@ -1,21 +1,8 @@
-const encryption = require('../util/encryption');
-const crypto = require('crypto');
-const async = require('async');
-const nodemailer = require('nodemailer');
 const User = require('mongoose').model('User');
 const Notification = require('mongoose').model('Notification');
 const Post = require('mongoose').model('Post');
 const Comment = require('mongoose').model('Comment');
-const passport = require('passport');
-const authValidation = require('./../util/authValidation');
-const friends = require('mongoose-friends');
-// const userController = require('./user-controller');
-const authCheck = require('../middleware/auth-check');
 const jwt = require('jsonwebtoken');
-const imdb = require('imdb-api');
-const $ = require('jquery');
-// const $ = require('jQuery');
-const jsdom = require("jsdom");
 const http = require("https");
 
 
